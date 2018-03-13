@@ -1,10 +1,12 @@
-export const defaultDice = [
-  {used: false, type: 0},
-  {used: false, type: 0},
-  {used: false, type: 0},
-  {used: false, type: 0},
-  {used: false, type: 0}
-]
+export function defaultDice () {
+  return [
+    {used: false, type: 0},
+    {used: false, type: 0},
+    {used: false, type: 0},
+    {used: false, type: 0},
+    {used: false, type: 0}
+  ]
+}
 
 export const combinations = [
   {

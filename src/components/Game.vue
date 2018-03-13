@@ -58,34 +58,48 @@ export default {
       playerTurn: 0,
       rollsLeft: 3,
       rolled: false,
-      rollButtonMessage: 'Кинуть!',
-      dice: defaultDice,
+      rollButtonMessage: 'Ход игрока 1',
+      dice: defaultDice(),
       combinations: combinations,
       scores: [{}, {}]
     }
   },
   methods: {
     roll: function (event) {
-      if (this.rollsLeft === 1) {
-        this.rollButtonMessage = 'Ход завершен'
-        this.rolled = false
-      } else {
-        this.rolled = true
+      this.rolled = true
 
-        for (var i = 0; i < this.dice.length; i++) {
-          var d = this.dice[i]
-          if (!d.used) {
-            d.type = getRandomInt(1, 5)
-          }
+      for (var i = 0; i < this.dice.length; i++) {
+        var d = this.dice[i]
+        if (!d.used) {
+          d.type = getRandomInt(1, 5)
         }
-        this.rollButtonMessage = 'Осталось ' + --this.rollsLeft
+      }
+      this.rollButtonMessage = 'Осталось ' + --this.rollsLeft
+
+      if (this.rollsLeft === 0) {
+        this.rollButtonMessage = 'Ход завершен'
       }
     },
     setScore: function (player, combId) {
-      if (player === this.playerTurn) {
-        if (!this.scores[player].hasOwnProperty(combId)) {
-          this.$set(this.scores[player], combId, 1)
+      if ((this.rolled) && (player === this.playerTurn) && (!this.scores[player].hasOwnProperty(combId))) {
+        var comb = this.combinations.find(e => e.id === combId)
+        var ans = 0
+
+        if (comb.settings.type === 'sum') {
+          for (var i = 0; i < this.dice.length; i++) {
+            console.log(this.dice[i])
+            if (comb.settings.allowed.includes(this.dice[i].type)) {
+              ans += this.dice[i].type
+            }
+          }
         }
+        this.$set(this.scores[player], combId, ans)
+
+        this.rolled = false
+        this.playerTurn = (this.playerTurn + 1) % 2
+        this.rollButtonMessage = 'Ход игрока ' + (this.playerTurn + 1)
+        this.dice = defaultDice()
+        this.rollsLeft = 3
       }
     }
   }
