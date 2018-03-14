@@ -12,6 +12,7 @@ li {
 a {
     color: #35495E;
 }
+
 .block {
     background-color: #35495E;
     color: white;
@@ -19,25 +20,26 @@ a {
     width: 100%;
 }
 .wrapper {
+  position: absolute;
     display: grid;
     grid-template-areas: 'scores scores' 'scores scores' 'scores scores' 'dice dice';
-    grid-gap: 10px;
+    grid-gap: 0px;
     grid-auto-rows: minmax(100px, auto);
+    bottom: 0;
+    top:0;
 }
 .dice-panel {
-    width: 100%;
-    display: flex;
+  width: 100%;
+  display: flex;
 }
 .dice-element {
     margin: 5px;
     text-align: center;
     width: 20%;
     position: relative;
-    border: 1px black solid;
-    border-radius: 4px;
 }
 .dice-element.used {
-    border: 1px green solid;
+  -webkit-filter: blur(3px);
 }
 .dice-element:before {
     /* to make 1:1 aspect ratio; */
@@ -51,16 +53,55 @@ a {
 .dice {
     grid-area: dice;
 }
+
+.diceN {
+ background-size: 100% auto;
+}
+.diceN0 {
+
+  background-size: 100% auto;
+  background-image: url(../assets/d-0.png);
+}
+
+.diceN1 {
+  background-image: url(../assets/d-1.png);
+}
+
+.diceN2 {
+  background-image: url(../assets/d-2.png);
+}
+
+.diceN3 {
+  background-image: url(../assets/d-3.png);
+}
+
+.diceN4 {
+  background-image: url(../assets/d-4.png);
+}
+
+.diceN5 {
+  background-image: url(../assets/d-5.png);
+}
+
+.diceN6 {
+  background-image: url(../assets/d-6.png);
+}
+
 .scores-table {
     border-collapse: collapse;
     width: 100%;
     height: 100%;
     table-layout: fixed;
+
+    
 }
 .scores-table table, th, td {
-    border: 1px solid black;
+    border: 2px solid black;
 }
-.setscore {
+table {
+    border: 2px solid black;
+}
+td.setscore {
   background-color: green;
 }
 
@@ -73,7 +114,7 @@ a {
   line-height:43px;
   font-family:'Oswald', Helvetica;
   display: block;
-  margin: 30px;
+  margin: 5px 10px 10px 10px;
 }
 .button:before:n {
   background:#f0f0f0;

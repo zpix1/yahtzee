@@ -84,7 +84,7 @@ export const combinations = [
     }
   }, {
     id: 6,
-    name: 'Шестреки',
+    name: 'Шестерки',
     calc: function (dice) {
       return sumOfType(dice, 6)
     }
@@ -116,7 +116,6 @@ export const combinations = [
     calc: function (dice) {
       let arr = Object.values(getMap(dice)).filter(Number)
 
-      console.log(arr)
       if (arraysEqual(arr, [2, 3]) || arraysEqual(arr, [3, 2])) {
         return 25
       } else {
@@ -172,7 +171,7 @@ export const combinations = [
     }
   }, {
     id: 12,
-    name: 'Yathzee',
+    name: 'Yahtzee',
     calc: function (dice) {
       let arr = Object.values(getMap(dice))
       if (Math.max(...arr) >= 5) {

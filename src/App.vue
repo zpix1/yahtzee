@@ -34,7 +34,6 @@ body {
 
 main {
   text-align: center;
-  margin-top: 20px;
 }
 
 header {
