@@ -3,19 +3,36 @@
     <div class="wrapper">
       <div class="scores block">
         <table class="scores-table">
+          <colgroup>
+    <col style="width:30%">
+    <col style="width:10%">
+    <col style="width:10%">
+    <col style="width:30%">
+    <col style="width:10%">
+    <col style="width:10%">
+  </colgroup>  
           <thead>
             <tr>
+              <th>Co</th>
+              <th>1</th>
+              <th>2</th>
+
               <th>Co</th>
               <th>1</th>
               <th>2</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="comb in combinations">
-              <td>{{ comb.name }}</td>
-              <td class="" v-bind:class="{ setscore: scores[0][comb.id] }" v-on:click="setScore(0, comb.id)">{{ scores[0][comb.id] }} {{ rolled && playerTurn == 0 && !scores[0][comb.id] ? comb.calc(dice) : ''}}</td>
-              <td class="" v-bind:class="{ setscore: scores[1][comb.id] }" v-on:click="setScore(1, comb.id)">{{ scores[1][comb.id] }} {{ rolled && playerTurn == 1 && !scores[1][comb.id] ? comb.calc(dice) : ''}}</td>
+            <tr v-for="comb in combinations.map((e, i, a) => i < a.length/2  ? [e, a[i + a.length / 2]] : '').slice(0,combinations.length/2)">
+              <td>{{ comb[0].name }}</td>
+              <td v-bind:class="{ setscore: scores[0][comb[0].id] !== undefined }" v-on:click="setScore(0, comb[0].id)">{{ scores[0][comb[0].id] }} {{ rolled && playerTurn == 0 && scores[0][comb[0].id] === undefined ? comb[0].calc(dice) : ''}}</td>
+              <td v-bind:class="{ setscore: scores[1][comb[0].id] !== undefined }" v-on:click="setScore(1, comb[0].id)">{{ scores[1][comb[0].id] }} {{ rolled && playerTurn == 1 && scores[1][comb[0].id] === undefined ? comb[0].calc(dice) : ''}}</td>
+
+              <td>{{ comb[1].name }}</td>
+              <td v-bind:class="{ setscore: scores[0][comb[1].id] !== undefined }" v-on:click="setScore(0, comb[1].id)">{{ scores[0][comb[1].id] }} {{ rolled && playerTurn == 0 && scores[0][comb[1].id] === undefined ? comb[1].calc(dice) : ''}}</td>
+              <td v-bind:class="{ setscore: scores[1][comb[1].id] !== undefined }" v-on:click="setScore(1, comb[1].id)">{{ scores[1][comb[1].id] }} {{ rolled && playerTurn == 1 && scores[1][comb[1].id] === undefined ? comb[1].calc(dice) : ''}}</td>
             </tr>
+
           </tbody>
         </table>
       </div>
@@ -77,7 +94,7 @@ export default {
       for (var i = 0; i < this.dice.length; i++) {
         var d = this.dice[i]
         if (!d.used) {
-          d.type = getRandomInt(1, 5)
+          d.type = getRandomInt(1, 6)
         }
       }
       this.rollButtonMessage = 'Осталось ' + --this.rollsLeft
