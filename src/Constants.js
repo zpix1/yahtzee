@@ -8,48 +8,52 @@ export function defaultDice () {
   ]
 }
 
+function sumOfType (dice, type) {
+  var ans = 0
+  for (var i = 0; i < dice.length; i++) {
+    if (dice[i].type === type) {
+      ans += dice[i].type
+    }
+  }
+  return ans
+}
+
 export const combinations = [
   {
     id: 1,
     name: 'ones',
-    settings: {
-      type: 'sum',
-      allowed: [1]
+    calc: function (dice) {
+      return sumOfType(dice, 1)
     }
   }, {
     id: 2,
     name: 'twos',
-    settings: {
-      type: 'sum',
-      allowed: [2]
+    calc: function (dice) {
+      return sumOfType(dice, 2)
     }
   }, {
     id: 3,
     name: 'threes',
-    settings: {
-      type: 'sum',
-      allowed: [3]
+    calc: function (dice) {
+      return sumOfType(dice, 3)
     }
   }, {
     id: 4,
     name: 'fours',
-    settings: {
-      type: 'sum',
-      allowed: [4]
+    calc: function (dice) {
+      return sumOfType(dice, 4)
     }
   }, {
     id: 5,
     name: 'fives',
-    settings: {
-      type: 'sum',
-      allowed: [5]
+    calc: function (dice) {
+      return sumOfType(dice, 5)
     }
   }, {
     id: 6,
     name: 'sixes',
-    settings: {
-      type: 'sum',
-      allowed: [6]
+    calc: function (dice) {
+      return sumOfType(dice, 6)
     }
   }
 ]

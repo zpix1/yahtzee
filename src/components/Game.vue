@@ -13,8 +13,8 @@
           <tbody>
             <tr v-for="comb in combinations">
               <td>{{ comb.name }}</td>
-              <td v-on:click="setScore(0, comb.id)">{{ scores[0][comb.id] }}</td>
-              <td v-on:click="setScore(1, comb.id)">{{ scores[1][comb.id] }}</td>
+              <td class="" v-bind:class="{ setscore: scores[0][comb.id] }" v-on:click="setScore(0, comb.id)">{{ scores[0][comb.id] }} {{ rolled && playerTurn == 0 && !scores[0][comb.id] ? comb.calc(dice) : ''}}</td>
+              <td class="" v-bind:class="{ setscore: scores[1][comb.id] }" v-on:click="setScore(1, comb.id)">{{ scores[1][comb.id] }} {{ rolled && playerTurn == 1 && !scores[1][comb.id] ? comb.calc(dice) : ''}}</td>
             </tr>
           </tbody>
         </table>
@@ -25,7 +25,7 @@
           <div class="dice-element" v-for="d in dice" v-bind:class="{ used: d.used }"
  v-on:click="d.type != 0 ? d.used = !d.used : ''" >{{ d.type }}</div>
         </div>
-        <input v-on:click="roll" type="button" id="roll-dice" v-bind:value="rollButtonMessage"></input>
+        <a href="#" v-on:click="roll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }" > {{rollButtonMessage}}</a>
       </div>
       <!-- <div class="two">Two</div>
       <div class="three">Three</div>
@@ -35,6 +35,8 @@
     </div>
   </div>
 </template>
+
+<style src="../assets/style.css"></style>
 
 <script>
 import {defaultDice, combinations} from '../Constants'
@@ -66,6 +68,10 @@ export default {
   },
   methods: {
     roll: function (event) {
+      if (this.rollsLeft === 0) {
+        return false
+      }
+
       this.rolled = true
 
       for (var i = 0; i < this.dice.length; i++) {
@@ -79,20 +85,13 @@ export default {
       if (this.rollsLeft === 0) {
         this.rollButtonMessage = 'Ход завершен'
       }
+      return true
     },
     setScore: function (player, combId) {
       if ((this.rolled) && (player === this.playerTurn) && (!this.scores[player].hasOwnProperty(combId))) {
         var comb = this.combinations.find(e => e.id === combId)
-        var ans = 0
 
-        if (comb.settings.type === 'sum') {
-          for (var i = 0; i < this.dice.length; i++) {
-            console.log(this.dice[i])
-            if (comb.settings.allowed.includes(this.dice[i].type)) {
-              ans += this.dice[i].type
-            }
-          }
-        }
+        var ans = comb.calc(this.dice)
         this.$set(this.scores[player], combId, ans)
 
         this.rolled = false
@@ -105,87 +104,3 @@ export default {
   }
 }
 </script>
-
-<style>
-h1, h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #35495E;
-}
-
-.block {
-  background-color: #35495E;
-  color: white;
-  height: 100%;
-  width: 100%;
-}
-
-.wrapper {
-  display: grid;
-  grid-template-areas:
-    'scores scores'
-    'scores scores'
-    'scores scores'
-    'dice dice';
-  grid-gap: 10px;
-  grid-auto-rows: minmax(100px, auto);
-}
-
-.dice-panel {
-  width: 100%;
-  display: flex;
-}
-
-.dice-element {
-  margin: 5px;
-  text-align: center;
-  width: 20%;
-  position: relative; 
-  border: 1px black solid;
-  border-radius: 4px;
-}
-
-.dice-element.used {
-  border: 1px green solid;
-}
-
-.dice-element:before {  /* to make 1:1 aspect ratio; */
-    content:'';
-    padding-top:100%;
-    float:left;
-}
-
-.scores {
-  grid-area: scores;
-}
-
-.dice {
-  grid-area: dice;
-}
-
-.scores-table {
-  border-collapse: collapse;
-  width: 100%;
-  height: 100%;
-
-}
-
-.scores-table table, th, td {
-  border: 1px solid black;
-}
-
-
-
-</style>
