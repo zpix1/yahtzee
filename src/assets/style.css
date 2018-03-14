@@ -22,44 +22,61 @@ a {
 .wrapper {
   position: absolute;
     display: grid;
-    grid-template-areas: 'scores scores' 'scores scores' 'scores scores' 'dice dice';
+    grid-template-areas: 'scores scores' 'scores scores' 'scores scores' 'dice dice' 'dice dice' 'dice dice';
     grid-gap: 0px;
     grid-auto-rows: minmax(100px, auto);
     bottom: 0;
-    top:0;
+    top: 0;
 }
 .dice-panel {
   width: 100%;
   display: flex;
 }
 .dice-element {
-    margin: 5px;
-    text-align: center;
-    width: 20%;
-    position: relative;
+  margin: 5px;
+  text-align: center;
+  width: 20%;
+  position: relative;
 }
+
+.spin-animation {
+  animation-name: spin;
+  animation-duration: 500ms;
+  animation-iteration-count: 1;
+  animation-timing-function: linear; 
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
 .dice-element.used {
   -webkit-filter: blur(3px);
 }
 .dice-element:before {
-    /* to make 1:1 aspect ratio; */
-    content: '';
-    padding-top: 100%;
-    float: left;
+    /* to make 1:1 aspect ratio */
+  content: '';
+  padding-top: 100%;
+  float: left;
 }
+
 .scores {
-    grid-area: scores;
+  grid-area: scores;
 }
 .dice {
-    grid-area: dice;
+  grid-area: dice;
 }
 
 .diceN {
- background-size: 100% auto;
-}
-.diceN0 {
-
   background-size: 100% auto;
+}
+
+.diceN0 {
   background-image: url(../assets/d-0.png);
 }
 
