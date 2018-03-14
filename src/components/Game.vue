@@ -4,12 +4,12 @@
       <div class="scores block">
         <table class="scores-table">
           <colgroup>
-    <col style="width:30%">
-    <col style="width:10%">
-    <col style="width:10%">
-    <col style="width:30%">
-    <col style="width:10%">
-    <col style="width:10%">
+    <col style="width:25%">
+    <col style="width:13%">
+    <col style="width:12%">
+    <col style="width:25%">
+    <col style="width:13%">
+    <col style="width:12%">
   </colgroup>  
           <thead>
             <tr>
@@ -31,6 +31,15 @@
               <td>{{ comb[1].name }}</td>
               <td v-bind:class="{ setscore: scores[0][comb[1].id] !== undefined }" v-on:click="setScore(0, comb[1].id)">{{ scores[0][comb[1].id] }} {{ rolled && playerTurn == 0 && scores[0][comb[1].id] === undefined ? comb[1].calc(dice) : ''}}</td>
               <td v-bind:class="{ setscore: scores[1][comb[1].id] !== undefined }" v-on:click="setScore(1, comb[1].id)">{{ scores[1][comb[1].id] }} {{ rolled && playerTurn == 1 && scores[1][comb[1].id] === undefined ? comb[1].calc(dice) : ''}}</td>
+            </tr>
+
+            <tr>
+              <td>Бонус</td>
+              <td v-bind:class="{ setscore: partSum(scores[0]) >= bonusRequire }">{{ partSum(scores[0]) }}/{{ bonusRequire }}</td>
+              <td v-bind:class="{ setscore: partSum(scores[1]) >= bonusRequire }">{{ partSum(scores[1]) }}/{{ bonusRequire }}</td>
+              <td>Итог</td>
+              <td>{{ finalSum(scores[0]) }}</td>
+              <td>{{ finalSum(scores[1]) }}</td>
             </tr>
 
           </tbody>
@@ -74,6 +83,8 @@ export default {
   name: 'game',
   data () {
     return {
+      bonusRequire: 63,
+      bonusSize: 35,
       playerTurn: 0,
       rollsLeft: 3,
       rolled: false,
@@ -86,7 +97,7 @@ export default {
   methods: {
     roll: function (event) {
       if (this.rollsLeft === 0) {
-        return false
+        return
       }
 
       this.rolled = true
@@ -102,7 +113,6 @@ export default {
       if (this.rollsLeft === 0) {
         this.rollButtonMessage = 'Ход завершен'
       }
-      return true
     },
     setScore: function (player, combId) {
       if ((this.rolled) && (player === this.playerTurn) && (!this.scores[player].hasOwnProperty(combId))) {
@@ -116,6 +126,52 @@ export default {
         this.rollButtonMessage = 'Ход игрока ' + (this.playerTurn + 1)
         this.dice = defaultDice()
         this.rollsLeft = 3
+
+        this.winner()
+      }
+    },
+    partSum: function (obj) {
+      var ans = 0
+      for (var i = 0; i < this.combinations.length; i++) {
+        if (this.combinations[i].group === 0) {
+          ans += obj[this.combinations[i].id] || 0
+        }
+      }
+      return ans
+    },
+    finalSum: function (obj) {
+      var ans = 0
+      var partSum = this.partSum(obj)
+      if (partSum >= this.bonusRequire) {
+        ans += this.bonusSize
+      }
+      for (var i = 0; i < this.combinations.length; i++) {
+        ans += obj[this.combinations[i].id] || 0
+      }
+      return ans
+    },
+    reset: function () {
+      this.scores = [{}, {}]
+    },
+    winner: function () {
+      var ended = true
+      for (var i = 0; i < this.combinations.length; i++) {
+        if (this.scores[0][this.combinations[i].id] === undefined) {
+          ended = false
+        }
+        if (this.scores[1][this.combinations[i].id] === undefined) {
+          ended = false
+        }
+      }
+      if (ended) {
+        if (this.finalSum(this.scores[0]) === this.finalSum(this.scores[1])) {
+          alert('Ничья, как ни странно')
+        } else if (this.finalSum(this.scores[0]) > this.finalSum(this.scores[1])) {
+          alert('Победил игрок 1!')
+        } else {
+          alert('Победил игрок 2!')
+        }
+        this.reset()
       }
     }
   }

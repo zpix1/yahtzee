@@ -53,42 +53,49 @@ function arraysEqual (a, b) {
 
 export const combinations = [
   {
+    group: 0,
     id: 1,
     name: 'Единицы',
     calc: function (dice) {
       return sumOfType(dice, 1)
     }
   }, {
+    group: 0,
     id: 2,
     name: 'Двойки',
     calc: function (dice) {
       return sumOfType(dice, 2)
     }
   }, {
+    group: 0,
     id: 3,
     name: 'Тройки',
     calc: function (dice) {
       return sumOfType(dice, 3)
     }
   }, {
+    group: 0,
     id: 4,
     name: 'Четверки',
     calc: function (dice) {
       return sumOfType(dice, 4)
     }
   }, {
+    group: 0,
     id: 5,
     name: 'Пятерки',
     calc: function (dice) {
       return sumOfType(dice, 5)
     }
   }, {
+    group: 0,
     id: 6,
     name: 'Шестерки',
     calc: function (dice) {
       return sumOfType(dice, 6)
     }
   }, {
+    group: 1,
     id: 7,
     name: 'x3',
     calc: function (dice) {
@@ -100,6 +107,7 @@ export const combinations = [
       }
     }
   }, {
+    group: 1,
     id: 8,
     name: 'x4',
     calc: function (dice) {
@@ -111,6 +119,7 @@ export const combinations = [
       }
     }
   }, {
+    group: 1,
     id: 9,
     name: 'Фулл Хаус',
     calc: function (dice) {
@@ -123,6 +132,7 @@ export const combinations = [
       }
     }
   }, {
+    group: 1,
     id: 10,
     name: 'Малая',
     calc: function (dice) {
@@ -147,6 +157,7 @@ export const combinations = [
       return 0
     }
   }, {
+    group: 1,
     id: 11,
     name: 'Большая',
     calc: function (dice) {
@@ -170,6 +181,7 @@ export const combinations = [
       return 0
     }
   }, {
+    group: 1,
     id: 12,
     name: 'Yahtzee',
     calc: function (dice) {
