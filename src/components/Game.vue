@@ -48,7 +48,7 @@
       <div class="dice block">
         Кости
         <div class="dice-panel">
-          <div class="dice-element" v-for="d in dice" v-bind:class="[{ used: d.used },'diceN'+d.type, 'diceN']"
+          <div class="dice-element" v-for="d in dice" v-bind:class="[{ used: d.used, 'spin-animation': !d.used && willRoll },'diceN'+d.type, 'diceN']"
  v-on:click="d.type != 0 ? d.used = !d.used : ''" >{{ d.type }}</div>
         </div>
         <a href="#" v-on:click="roll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }" > {{rollButtonMessage}}</a>
@@ -83,6 +83,7 @@ export default {
   name: 'game',
   data () {
     return {
+      willRoll: false,
       bonusRequire: 63,
       bonusSize: 35,
       playerTurn: 0,
@@ -101,6 +102,10 @@ export default {
       }
 
       this.rolled = true
+      this.willRoll = true
+
+      let thisSave = this // Bad, but what can I do
+      setTimeout(function () { thisSave.willRoll = false }, 500)
 
       for (var i = 0; i < this.dice.length; i++) {
         var d = this.dice[i]
