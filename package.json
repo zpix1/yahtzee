@@ -13,7 +13,9 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs"
   },
   "dependencies": {
-    "vue": "^2.5.2"
+    "vue": "^2.5.2",
+    "vue-persist": "^0.4.0",
+    "vue-pressure": "^2.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.5",

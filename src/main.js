@@ -3,6 +3,12 @@
 import Vue from 'vue'
 import App from './App'
 
+import VuePersist from 'vue-persist'
+import VuePressure from 'vue-pressure'
+
+Vue.use(VuePressure)
+Vue.use(VuePersist)
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

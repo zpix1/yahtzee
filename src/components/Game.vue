@@ -1,6 +1,7 @@
 <template>
   <div class="main">
-    <div class="wrapper">
+    <h1 class="header">Yahtzee</h1>
+    <div class="wrapper card">
       <div class="scores block">
         <table class="scores-table">
           <colgroup>
@@ -25,12 +26,24 @@
           <tbody>
             <tr v-for="comb in combinations.map((e, i, a) => i < a.length/2  ? [e, a[i + a.length / 2]] : '').slice(0,combinations.length/2)">
               <td>{{ comb[0].name }}</td>
-              <td v-bind:class="{ setscore: scores[0][comb[0].id] !== undefined }" v-on:click="setScore(0, comb[0].id)">{{ scores[0][comb[0].id] }} {{ rolled && playerTurn == 0 && scores[0][comb[0].id] === undefined ? comb[0].calc(dice) : ''}}</td>
-              <td v-bind:class="{ setscore: scores[1][comb[0].id] !== undefined }" v-on:click="setScore(1, comb[0].id)">{{ scores[1][comb[0].id] }} {{ rolled && playerTurn == 1 && scores[1][comb[0].id] === undefined ? comb[0].calc(dice) : ''}}</td>
+              <td v-bind:class="{ setscore: scores[0][comb[0].id] !== undefined, scorecell: (rolled && playerTurn === 0 && scores[0][comb[0].id] === undefined ? true : false) }" v-on:click="setScore(0, comb[0].id)">
+                {{ calcCell(0, comb[0]) }}
+                {{ scores[0][comb[0].id] }}
+              </td>
+              <td v-bind:class="{ setscore: scores[1][comb[0].id] !== undefined, scorecell: (rolled && playerTurn === 1 && scores[1][comb[0].id] === undefined ? true : false) }" v-on:click="setScore(1, comb[0].id)">
+                {{ calcCell(1, comb[0]) }}
+                {{ scores[1][comb[0].id] }}
+              </td>
 
               <td>{{ comb[1].name }}</td>
-              <td v-bind:class="{ setscore: scores[0][comb[1].id] !== undefined }" v-on:click="setScore(0, comb[1].id)">{{ scores[0][comb[1].id] }} {{ rolled && playerTurn == 0 && scores[0][comb[1].id] === undefined ? comb[1].calc(dice) : ''}}</td>
-              <td v-bind:class="{ setscore: scores[1][comb[1].id] !== undefined }" v-on:click="setScore(1, comb[1].id)">{{ scores[1][comb[1].id] }} {{ rolled && playerTurn == 1 && scores[1][comb[1].id] === undefined ? comb[1].calc(dice) : ''}}</td>
+              <td v-bind:class="{ setscore: scores[0][comb[1].id] !== undefined, scorecell: (rolled && playerTurn === 0 && scores[0][comb[1].id] === undefined ? true : false) }" v-on:click="setScore(0, comb[1].id)">
+                {{ calcCell(0, comb[1]) }}
+                {{ scores[0][comb[1].id] }} 
+              </td>
+              <td v-bind:class="{ setscore: scores[1][comb[1].id] !== undefined, scorecell: (rolled && playerTurn === 1 && scores[1][comb[1].id] === undefined ? true : false) }" v-on:click="setScore(1, comb[1].id)">
+                {{ calcCell(1, comb[1]) }}
+                {{ scores[1][comb[1].id] }} 
+              </td>
             </tr>
 
             <tr>
@@ -51,7 +64,7 @@
           <div class="dice-element" v-for="d in dice" v-bind:class="[{ used: d.used, 'spin-animation': !d.used && willRoll },'diceN'+d.type, 'diceN']"
  v-on:click="d.type != 0 ? d.used = !d.used : ''" >{{ d.type }}</div>
         </div>
-        <a href="#" v-on:click="roll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }" > {{rollButtonMessage}}</a>
+        <a href="#" v-pressure @pressureDeepStart="confirmReset" v-on:click="roll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }" > {{rollButtonMessage}}</a>
       </div>
       <!-- <div class="two">Two</div>
       <div class="three">Three</div>
@@ -95,7 +108,11 @@ export default {
       scores: [{}, {}]
     }
   },
+  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage'],
   methods: {
+    calcCell: function (player, comb) {
+      return this.rolled && this.playerTurn === player && this.scores[player][comb.id] === undefined ? comb.calc(this.dice) : undefined
+    },
     roll: function (event) {
       if (this.rollsLeft === 0) {
         return
@@ -104,8 +121,7 @@ export default {
       this.rolled = true
       this.willRoll = true
 
-      let thisSave = this // Bad, but what can I do
-      setTimeout(function () { thisSave.willRoll = false }, 500)
+      setTimeout(() => { this.willRoll = false }, 500)
 
       for (var i = 0; i < this.dice.length; i++) {
         var d = this.dice[i]
@@ -156,7 +172,18 @@ export default {
       return ans
     },
     reset: function () {
+      this.willRoll = false
+      this.playerTurn = 0
+      this.rollsLeft = 3
+      this.rolled = false
+      this.rollButtonMessage = 'Ход игрока 1'
+      this.dice = defaultDice()
       this.scores = [{}, {}]
+    },
+    confirmReset: function () {
+      if (confirm('Вы точно хотете начать заново?')) {
+        this.reset()
+      }
     },
     winner: function () {
       var ended = true
@@ -179,6 +206,16 @@ export default {
         this.reset()
       }
     }
+    // loadScores: function () {
+    //   if (localStorage.getItem('scores')) {
+    //     return localStorage.getItem('scores')
+    //   } else {
+    //     return [{}, {}]
+    //   }
+    // },
+    // setScores: function (scores) {
+    //   localStorage.setItem('scores')
+    // }
   }
 }
 </script>
