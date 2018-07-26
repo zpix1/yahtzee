@@ -1,27 +1,11 @@
-# yahtzee
+# Yahtzee
 
-> Simple 2-player game
+> Simple 2-player dice game
 
-## Build Setup
+Try it [here](https://zpix1.github.io/yahtzee/#)
 
-``` bash
-# install dependencies
-npm install
+Features:
 
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-# run unit tests
-npm run unit
-
-# run all tests
-npm test
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+* localStorage to save scores
+* adaptive design for desktop and mobile
+* force/deep touch to reset scores 
