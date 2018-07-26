@@ -192,5 +192,10 @@ export const combinations = [
         return 0
       }
     }
+  }, {
+    group: 1,
+    id: 13,
+    name: 'Шанс',
+    calc: sumOfAll
   }
 ]

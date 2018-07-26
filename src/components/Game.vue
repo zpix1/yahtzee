@@ -24,7 +24,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="comb in combinations.map((e, i, a) => i < a.length/2  ? [e, a[i + a.length / 2]] : '').slice(0,combinations.length/2)">
+            <tr v-for="comb in combinations.slice(0, 12).map((e, i, a) => i < a.length/2  ? [e, a[i + a.length / 2]] : '').slice(0,combinations.length/2)">
               <td>{{ comb[0].name }}</td>
               <td v-bind:class="{ setscore: scores[0][comb[0].id] !== undefined, scorecell: (rolled && playerTurn === 0 && scores[0][comb[0].id] === undefined ? true : false) }" v-on:click="setScore(0, comb[0].id)">
                 {{ calcCell(0, comb[0]) }}
@@ -34,7 +34,6 @@
                 {{ calcCell(1, comb[0]) }}
                 {{ scores[1][comb[0].id] }}
               </td>
-
               <td>{{ comb[1].name }}</td>
               <td v-bind:class="{ setscore: scores[0][comb[1].id] !== undefined, scorecell: (rolled && playerTurn === 0 && scores[0][comb[1].id] === undefined ? true : false) }" v-on:click="setScore(0, comb[1].id)">
                 {{ calcCell(0, comb[1]) }}
@@ -48,13 +47,25 @@
 
             <tr>
               <td>Бонус</td>
-              <td v-bind:class="{ setscore: partSum(scores[0]) >= bonusRequire }">{{ partSum(scores[0]) }}/{{ bonusRequire }}</td>
-              <td v-bind:class="{ setscore: partSum(scores[1]) >= bonusRequire }">{{ partSum(scores[1]) }}/{{ bonusRequire }}</td>
+              <td class="bonuscell" v-bind:class="{ setscore: partSum(scores[0]) >= bonusRequire }">{{ partSum(scores[0]) }}/{{ bonusRequire }}</td>
+              <td class="bonuscell"v-bind:class="{ setscore: partSum(scores[1]) >= bonusRequire }">{{ partSum(scores[1]) }}/{{ bonusRequire }}</td>
+              <td>{{ combinations[12].name }}</td>
+              <td v-bind:class="{ setscore: scores[0][combinations[12].id] !== undefined, scorecell: (rolled && playerTurn === 0 && scores[0][combinations[12].id] === undefined ? true : false) }" v-on:click="setScore(0, combinations[12].id)">
+                {{ calcCell(0, combinations[12]) }}
+                {{ scores[0][combinations[12].id] }} 
+              </td>
+              <td v-bind:class="{ setscore: scores[1][combinations[12].id] !== undefined, scorecell: (rolled && playerTurn === 1 && scores[1][combinations[12].id] === undefined ? true : false) }" v-on:click="setScore(1, combinations[12].id)">
+                {{ calcCell(1, combinations[12]) }}
+                {{ scores[1][combinations[12].id] }} 
+              </td>
+            </tr>
+
+            <tr>
+              <td></td><td></td><td></td>
               <td>Итог</td>
               <td>{{ finalSum(scores[0]) }}</td>
               <td>{{ finalSum(scores[1]) }}</td>
             </tr>
-
           </tbody>
         </table>
       </div>
