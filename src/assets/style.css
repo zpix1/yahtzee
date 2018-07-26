@@ -145,7 +145,8 @@ td.setscore {
   color: #FFF;
   text-decoration: none;
   line-height: 43px;
-  font-family: 'Oswald', Helvetica;
+  /* font-family: 'Oswald', Helvetica; */
+  font-size: 20px;
   display: inline-block;
   margin: 5px 10px 10px;
   width: calc(100% - 20px);
