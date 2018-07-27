@@ -90,7 +90,6 @@
   </div>
 </template>
 
-<style src="../assets/style.css"></style>
 
 <script>
 import {defaultDice, combinations} from '../Constants'

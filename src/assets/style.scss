@@ -1,3 +1,7 @@
+$primary-color: #35495E;
+$desktop-color: #1d242b;
+$comb-used-color: #388E3C;
+$dice-border-color: #3EACBA;
 h1,
 h2 {
   font-weight: normal;
@@ -14,7 +18,7 @@ li {
 }
 
 a {
-  color: #35495E;
+  color: $primary-color;
 }
 
 .block {
@@ -28,7 +32,7 @@ a {
   grid-auto-rows: minmax(50px, auto);
   bottom: 0;
   top: 0;
-  background-color: #35495E;
+  background-color: $primary-color;
 }
 
 .buttons {
@@ -46,12 +50,7 @@ a {
   display: flex;
 }
 
-.dice-element {
-  margin: 5px;
-  text-align: center;
-  width: 20%;
-  position: relative;
-}
+
 
 .spin-animation {
   animation-name: spin;
@@ -68,9 +67,20 @@ a {
     transform: rotate(360deg);
   }
 }
+/* Dice */
+.dice-element {
+  margin: 6px;
+  text-align: center;
+  width: 20%;
+  position: relative;
+}
 
 .dice-element.used {
-  filter: blur(3px);
+  margin: 2px;
+  stroke: black;
+  border: calc(5px - 1px) solid $dice-border-color;
+  border-radius: 15px;
+  /* filter: blur(3px); */
 }
 
 .dice-element:before {
@@ -140,15 +150,15 @@ td.bonuscell {
 .scores-table table,
 th,
 td {
-  border: 2px solid #1d242b;
+  border: 2px solid $desktop-color;
 }
 
 table {
-  border: 2px solid #1d242b;
+  border: 2px solid $desktop-color;
 }
 
 td.setscore {
-  background-color: green;
+  background-color: $comb-used-color;
 }
 
 .button {
@@ -270,13 +280,13 @@ body {
     border-radius: 10px;
   }
   body {
-    background-color: #1d242b;
+    background-color: $desktop-color;
   }
 }
 
 @media screen and (max-width: 800px) {
   body {
-    background-color: #35495E;
+    background-color: $primary-color;
   }
   .header {
     display: none;
