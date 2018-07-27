@@ -73,9 +73,13 @@
         Кости
         <div class="dice-panel">
           <div class="dice-element" v-for="d in dice" v-bind:class="[{ used: d.used, 'spin-animation': !d.used && willRoll },'diceN'+d.type, 'diceN']"
- v-on:click="d.type != 0 ? d.used = !d.used : ''" >{{ d.type }}</div>
+ v-on:click="d.type != 0 ? d.used = !d.used : ''" ></div>
         </div>
-        <button v-pressure @pressureDeepStart="confirmReset" v-on:click="roll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }" > {{rollButtonMessage}}</button>
+      </div>
+      <div class="buttons block">
+        <div class="buttons-panel">
+          <button v-pressure @pressureDeepStart="confirmReset" v-on:click="roll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }" > {{rollButtonMessage}}</button>
+        </div>
       </div>
       <!-- <div class="two">Two</div>
       <div class="three">Three</div>
