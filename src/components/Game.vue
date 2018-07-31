@@ -213,23 +213,13 @@ export default {
         if (this.finalSum(this.scores[0]) === this.finalSum(this.scores[1])) {
           alert('Ничья, как ни странно')
         } else if (this.finalSum(this.scores[0]) > this.finalSum(this.scores[1])) {
-          alert('Победил игрок 1!')
+          alert(`Победил игрок 1 со счетом ${this.finalSum(this.scores[0])}!`)
         } else {
-          alert('Победил игрок 2!')
+          alert(`Победил игрок 2 со счетом ${this.finalSum(this.scores[1])}!`)
         }
         this.reset()
       }
     }
-    // loadScores: function () {
-    //   if (localStorage.getItem('scores')) {
-    //     return localStorage.getItem('scores')
-    //   } else {
-    //     return [{}, {}]
-    //   }
-    // },
-    // setScores: function (scores) {
-    //   localStorage.setItem('scores')
-    // }
   }
 }
 </script>
