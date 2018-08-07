@@ -25,6 +25,18 @@
         for (var file of chunk.files) {
           if (file.match(/\.(js|css)$/)) { %>
     <link rel="<%= chunk.initial?'preload':'prefetch' %>" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>"><% }}} %>
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/apple-touch-icon.png?v=kP3PKElEB4">
+    <link rel="icon" type="image/png" sizes="32x32" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/favicon-32x32.png?v=kP3PKElEB4">
+    <link rel="icon" type="image/png" sizes="16x16" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/favicon-16x16.png?v=kP3PKElEB4">
+    <link rel="mask-icon" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/safari-pinned-tab.svg?v=kP3PKElEB4" color="#5bbad5">
+    <link rel="shortcut icon" href="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/favicon.ico?v=kP3PKElEB4">
+    <meta name="apple-mobile-web-app-title" content="Yahtzee">
+    <meta name="application-name" content="Yahtzee">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    
   </head>
   <body>
     <noscript>
