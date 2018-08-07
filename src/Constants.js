@@ -1,10 +1,10 @@
 export function defaultDice () {
   return [
-    {used: false, type: 0},
-    {used: false, type: 0},
-    {used: false, type: 0},
-    {used: false, type: 0},
-    {used: false, type: 0}
+    {used: false, type: 0, id: 0},
+    {used: false, type: 0, id: 1},
+    {used: false, type: 0, id: 2},
+    {used: false, type: 0, id: 3},
+    {used: false, type: 0, id: 4}
   ]
 }
 
@@ -55,42 +55,42 @@ export const combinations = [
   {
     group: 0,
     id: 1,
-    name: 'Единицы',
+    name: 'Ones',
     calc: function (dice) {
       return sumOfType(dice, 1)
     }
   }, {
     group: 0,
     id: 2,
-    name: 'Двойки',
+    name: 'Twos',
     calc: function (dice) {
       return sumOfType(dice, 2)
     }
   }, {
     group: 0,
     id: 3,
-    name: 'Тройки',
+    name: 'Threes',
     calc: function (dice) {
       return sumOfType(dice, 3)
     }
   }, {
     group: 0,
     id: 4,
-    name: 'Четверки',
+    name: 'Fours',
     calc: function (dice) {
       return sumOfType(dice, 4)
     }
   }, {
     group: 0,
     id: 5,
-    name: 'Пятерки',
+    name: 'Fives',
     calc: function (dice) {
       return sumOfType(dice, 5)
     }
   }, {
     group: 0,
     id: 6,
-    name: 'Шестерки',
+    name: 'Sixes',
     calc: function (dice) {
       return sumOfType(dice, 6)
     }
@@ -121,7 +121,7 @@ export const combinations = [
   }, {
     group: 1,
     id: 9,
-    name: 'Фулл Хаус',
+    name: 'Full House',
     calc: function (dice) {
       let arr = Object.values(getMap(dice)).filter(Number)
 
@@ -134,7 +134,7 @@ export const combinations = [
   }, {
     group: 1,
     id: 10,
-    name: 'Малая',
+    name: 'Small straight',
     calc: function (dice) {
       let possibleCombs = [
         {1: 1, 2: 1, 3: 1, 4: 1},
@@ -159,7 +159,7 @@ export const combinations = [
   }, {
     group: 1,
     id: 11,
-    name: 'Большая',
+    name: 'Large straight',
     calc: function (dice) {
       let possibleCombs = [
         {1: 1, 2: 1, 3: 1, 4: 1, 5: 1},
@@ -195,7 +195,7 @@ export const combinations = [
   }, {
     group: 1,
     id: 13,
-    name: 'Шанс',
+    name: 'Chance',
     calc: sumOfAll
   }
 ]

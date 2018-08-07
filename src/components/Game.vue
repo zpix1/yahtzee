@@ -24,7 +24,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="comb in combinations.slice(0, 12).map((e, i, a) => i < a.length/2  ? [e, a[i + a.length / 2]] : '').slice(0,combinations.length/2)">
+            <tr v-bind:key="comb[0].id" v-for="comb in combinations.slice(0, 12).map((e, i, a) => i < a.length/2  ? [e, a[i + a.length / 2]] : '').slice(0,combinations.length/2)">
               <td>{{ comb[0].name }}</td>
               <td v-bind:class="{ setscore: scores[0][comb[0].id] !== undefined, scorecell: (rolled && playerTurn === 0 && scores[0][comb[0].id] === undefined ? true : false) }" v-on:click="setScore(0, comb[0].id)">
                 {{ calcCell(0, comb[0]) }}
@@ -46,9 +46,9 @@
             </tr>
 
             <tr>
-              <td>Бонус</td>
+              <td>Bonus</td>
               <td class="bonuscell" v-bind:class="{ setscore: partSum(scores[0]) >= bonusRequire }">{{ partSum(scores[0]) }}/{{ bonusRequire }}</td>
-              <td class="bonuscell"v-bind:class="{ setscore: partSum(scores[1]) >= bonusRequire }">{{ partSum(scores[1]) }}/{{ bonusRequire }}</td>
+              <td class="bonuscell" v-bind:class="{ setscore: partSum(scores[1]) >= bonusRequire }">{{ partSum(scores[1]) }}/{{ bonusRequire }}</td>
               <td>{{ combinations[12].name }}</td>
               <td v-bind:class="{ setscore: scores[0][combinations[12].id] !== undefined, scorecell: (rolled && playerTurn === 0 && scores[0][combinations[12].id] === undefined ? true : false) }" v-on:click="setScore(0, combinations[12].id)">
                 {{ calcCell(0, combinations[12]) }}
@@ -62,7 +62,7 @@
 
             <tr>
               <td></td><td></td><td></td>
-              <td>Итог</td>
+              <td>Total</td>
               <td>{{ finalSum(scores[0]) }}</td>
               <td>{{ finalSum(scores[1]) }}</td>
             </tr>
@@ -70,9 +70,9 @@
         </table>
       </div>
       <div class="dice block">
-        Кости
+        Dice
         <div class="dice-panel">
-          <div class="dice-element" v-for="d in dice" v-bind:class="[{ used: d.used, 'spin-animation': !d.used && willRoll },'diceN'+d.type, 'diceN']"
+          <div v-bind:key="d.id" class="dice-element" v-for="d in dice" v-bind:class="[{ used: d.used, 'spin-animation': !d.used && willRoll },'diceN'+d.type, 'diceN']"
  v-on:click="d.type != 0 ? d.used = !d.used : ''" ></div>
         </div>
       </div>
@@ -81,11 +81,6 @@
           <button v-pressure @pressureDeepStart="confirmReset" v-on:click="roll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }" > {{rollButtonMessage}}</button>
         </div>
       </div>
-      <!-- <div class="two">Two</div>
-      <div class="three">Three</div>
-      <div class="four">Four</div>
-      <div class="five">Five</div>
-      <div class="six">Six</div> -->
     </div>
   </div>
 </template>
@@ -116,7 +111,7 @@ export default {
       playerTurn: 0,
       rollsLeft: 3,
       rolled: false,
-      rollButtonMessage: 'Ход игрока 1',
+      rollButtonMessage: 'Player 1 turn',
       dice: defaultDice(),
       combinations: combinations,
       scores: [{}, {}]
@@ -143,10 +138,10 @@ export default {
           d.type = getRandomInt(1, 6)
         }
       }
-      this.rollButtonMessage = 'Осталось ' + --this.rollsLeft
+      this.rollButtonMessage = --this.rollsLeft + ' rolls left'
 
       if (this.rollsLeft === 0) {
-        this.rollButtonMessage = 'Ход завершен'
+        this.rollButtonMessage = 'No rolls left'
       }
     },
     setScore: function (player, combId) {
@@ -158,7 +153,7 @@ export default {
 
         this.rolled = false
         this.playerTurn = (this.playerTurn + 1) % 2
-        this.rollButtonMessage = 'Ход игрока ' + (this.playerTurn + 1)
+        this.rollButtonMessage = 'Player ' + (this.playerTurn + 1) + ' turn'
         this.dice = defaultDice()
         this.rollsLeft = 3
 
@@ -190,12 +185,12 @@ export default {
       this.playerTurn = 0
       this.rollsLeft = 3
       this.rolled = false
-      this.rollButtonMessage = 'Ход игрока 1'
+      this.rollButtonMessage = 'Player 1 turn'
       this.dice = defaultDice()
       this.scores = [{}, {}]
     },
     confirmReset: function () {
-      if (confirm('Вы точно хотете начать заново?')) {
+      if (confirm('Are you sure you want to restart the game?')) {
         this.reset()
       }
     },
@@ -211,11 +206,11 @@ export default {
       }
       if (ended) {
         if (this.finalSum(this.scores[0]) === this.finalSum(this.scores[1])) {
-          alert('Ничья, как ни странно')
+          alert('Draw!')
         } else if (this.finalSum(this.scores[0]) > this.finalSum(this.scores[1])) {
-          alert(`Победил игрок 1 со счетом ${this.finalSum(this.scores[0])}!`)
+          alert(`Player 1 won with a score of ${this.finalSum(this.scores[0])}!`)
         } else {
-          alert(`Победил игрок 2 со счетом ${this.finalSum(this.scores[1])}!`)
+          alert(`Player 2 won with a score of ${this.finalSum(this.scores[1])}!`)
         }
         this.reset()
       }

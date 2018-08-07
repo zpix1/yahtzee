@@ -28,7 +28,7 @@ a {
 .wrapper {
   display: grid;
   grid-template-areas: 'scores scores' 'dice dice' 'buttons buttons';
-  /* grid-gap: 50px; */
+  // /* grid-gap: 50px; */
   grid-auto-rows: minmax(50px, auto);
   bottom: 0;
   top: 0;
@@ -49,8 +49,6 @@ a {
   width: 100%;
   display: flex;
 }
-
-
 
 .spin-animation {
   animation-name: spin;
@@ -80,7 +78,6 @@ a {
   stroke: black;
   border: calc(5px - 1px) solid $dice-border-color;
   border-radius: 15px;
-  /* filter: blur(3px); */
 }
 
 .dice-element:before {
@@ -167,7 +164,6 @@ td.setscore {
   color: #FFF;
   text-decoration: none;
   line-height: 43px;
-  /* font-family: 'Oswald', Helvetica; */
   font-size: 20px;
   display: inline-block;
   margin: 5px 10px 10px;
