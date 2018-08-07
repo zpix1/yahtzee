@@ -138,10 +138,12 @@ export default {
           d.type = getRandomInt(1, 6)
         }
       }
-      this.rollButtonMessage = --this.rollsLeft + ' rolls left'
+
+      const throwsLeft = --this.rollsLeft
+      this.rollButtonMessage = throwsLeft === 1 ? '1 throw left' : `${throwsLeft} throws left`
 
       if (this.rollsLeft === 0) {
-        this.rollButtonMessage = 'No rolls left'
+        this.rollButtonMessage = 'No throws left'
       }
     },
     setScore: function (player, combId) {
