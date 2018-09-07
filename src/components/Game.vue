@@ -1,17 +1,18 @@
 <template>
   <div class="main">
     <h1 class="header">Yahtzee</h1>
+    
     <div class="wrapper card">
       <div class="scores block">
         <table class="scores-table">
           <colgroup>
-    <col style="width:25%">
-    <col style="width:13%">
-    <col style="width:12%">
-    <col style="width:25%">
-    <col style="width:13%">
-    <col style="width:12%">
-  </colgroup>  
+            <col style="width:25%">
+            <col style="width:13%">
+            <col style="width:12%">
+            <col style="width:25%">
+            <col style="width:13%">
+            <col style="width:12%">
+          </colgroup>  
           <thead>
             <tr>
               <th>Co</th>
@@ -72,14 +73,22 @@
       <div class="dice block">
         Dice
         <div class="dice-panel">
-          <div v-bind:key="d.id" class="dice-element" v-for="d in dice" v-bind:class="[{ used: d.used, 'spin-animation': !d.used && willRoll },'diceN'+d.type, 'diceN']"
- v-on:click="d.type != 0 ? d.used = !d.used : ''" ></div>
+          <Dice :dice="dice" :willRoll="willRoll"/>
         </div>
       </div>
       <div class="buttons block">
         <div class="buttons-panel">
-          <button v-pressure @pressureDeepStart="confirmReset" v-on:click="roll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }" > {{rollButtonMessage}}</button>
+          <img class="settings-icon"
+            src="http://pngimage.net/wp-content/uploads/2018/06/setting-png-icon-.png"
+            @click="settings"
+          />
+          <button v-on:click="roll(false)" v-on: type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }">
+            {{ rollButtonMessage }}
+          </button>
         </div>
+      </div>
+      <div v-bind:class="{'hidden-settings': !showSettings}" class="settings block">
+        123
       </div>
     </div>
   </div>
@@ -87,22 +96,15 @@
 
 
 <script>
-import {defaultDice, combinations} from '../Constants'
-
-function getRandomInt (min, max) {
-  var byteArray = new Uint8Array(1)
-  window.crypto.getRandomValues(byteArray)
-
-  var range = max - min + 1
-  var maxRange = 256
-  if (byteArray[0] >= Math.floor(maxRange / range) * range) {
-    return getRandomInt(min, max)
-  }
-  return min + (byteArray[0] % range)
-}
+import { defaultDice, combinations } from '../Constants'
+import { getRandomInt } from '../utility'
+import Dice from './Dice'
 
 export default {
   name: 'game',
+  components: {
+    Dice
+  },
   data () {
     return {
       willRoll: false,
@@ -114,15 +116,17 @@ export default {
       rollButtonMessage: 'Player 1 turn',
       dice: defaultDice(),
       combinations: combinations,
-      scores: [{}, {}]
+      scores: [{}, {}],
+      adjustments: true,
+      showSettings: false
     }
   },
-  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage'],
+  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments'],
   methods: {
     calcCell: function (player, comb) {
       return this.rolled && this.playerTurn === player && this.scores[player][comb.id] === undefined ? comb.calc(this.dice) : undefined
     },
-    roll: function (event) {
+    roll: function (activate) {
       if (this.rollsLeft === 0) {
         return
       }
@@ -132,13 +136,55 @@ export default {
 
       setTimeout(() => { this.willRoll = false }, 500)
 
-      for (var i = 0; i < this.dice.length; i++) {
-        var d = this.dice[i]
-        if (!d.used) {
-          d.type = getRandomInt(1, 6)
+      if (this.adjustments && activate) {
+        var combs = this.combinations.filter((c) => this.scores[this.playerTurn][c.id] === undefined)
+        var newDices = Array(this.dice.length)
+        var allDices = []
+
+        for (var i = 0; i < this.dice.length; i++) {
+          newDices[i] = Object.assign({}, this.dice[i])
+        }
+
+        console.log(newDices.map((e) => e.type))
+
+        for (var j = 0; j < 10000; j++) {
+          var tempDices = newDices.map(e => Object.assign({}, e)).slice()
+          for (i = 0; i < tempDices.length; i++) {
+            if (!tempDices[i].used) {
+              tempDices[i].type = getRandomInt(1, 6)
+            }
+          }
+          // console.log(tempDices.map((e) => e.type))
+          allDices.push(tempDices)
+        }
+
+        var ans = {dice: null, val: -1, comb: null}
+        for (j = 0; j < combs.length; j++) {
+          var comb = combs[j]
+          for (i = 0; i < allDices.length; i++) {
+            if (comb.calc(allDices[i]) > ans.val) {
+              ans.dice = allDices[i]
+              ans.val = comb.calc(allDices[i])
+              ans.comb = comb
+            }
+          }
+        }
+
+        console.log(ans)
+        for (i = 0; i < this.dice.length; i++) {
+          var d = this.dice[i]
+          if (!d.used) {
+            d.type = ans.dice[i].type
+          }
+        }
+      } else {
+        for (i = 0; i < this.dice.length; i++) {
+          d = this.dice[i]
+          if (!d.used) {
+            d.type = getRandomInt(1, 6)
+          }
         }
       }
-
       const throwsLeft = --this.rollsLeft
       this.rollButtonMessage = throwsLeft === 1 ? '1 throw left' : `${throwsLeft} throws left`
 
@@ -191,10 +237,8 @@ export default {
       this.dice = defaultDice()
       this.scores = [{}, {}]
     },
-    confirmReset: function () {
-      if (confirm('Are you sure you want to restart the game?')) {
-        this.reset()
-      }
+    settings: function () {
+      this.showSettings = true
     },
     winner: function () {
       var ended = true

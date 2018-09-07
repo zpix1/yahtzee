@@ -14,9 +14,13 @@
     "deploy": "npm run build && git add * && git commit && git push origin master && git subtree push  --prefix dist origin gh-pages"
   },
   "dependencies": {
+    "install": "^0.12.1",
+    "npm": "^6.4.1",
+    "sweetalert": "^2.1.0",
+    "sweetalert2": "^7.26.28",
+    "uninstall": "0.0.0",
     "vue": "^2.5.2",
-    "vue-persist": "^0.4.0",
-    "vue-pressure": "^2.1.0"
+    "vue-persist": "^0.4.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.5",

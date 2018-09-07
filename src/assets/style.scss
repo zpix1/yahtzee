@@ -27,9 +27,10 @@ a {
 
 .wrapper {
   display: grid;
-  grid-template-areas: 'scores scores' 'dice dice' 'buttons buttons';
+  grid-template-areas: 'scores scores' 'dice dice' 'buttons buttons' 'settings settings';
   // /* grid-gap: 50px; */
-  grid-auto-rows: minmax(50px, auto);
+  // grid-auto-rows: minmax(50px, auto);
+  // grid-template-rows: 20% 20% 10% 10%;
   bottom: 0;
   top: 0;
   background-color: $primary-color;
@@ -38,6 +39,15 @@ a {
 .buttons {
   align-self: end;
   grid-area: buttons;
+}
+
+.settings {
+  grid-area: settings;
+}
+
+.hidden-settings {
+  visibility: hidden;
+  display: none;
 }
 
 .dice-panel {
@@ -74,9 +84,9 @@ a {
 }
 
 .dice-element.used {
-  margin: 2px;
+  margin: 1px;
   stroke: black;
-  border: calc(5px - 1px) solid $dice-border-color;
+  border: calc(6px - 1px) solid $dice-border-color;
   border-radius: 15px;
 }
 
@@ -156,6 +166,7 @@ table {
 
 td.setscore {
   background-color: $comb-used-color;
+  transition: 0.5s;
 }
 
 .button {
@@ -295,5 +306,12 @@ body {
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
+}
+
+.settings-icon {
+  width: 100%;
+  width: 43px;
+  height: 43px;
+  margin: auto 0px auto 10px;
 }
 
