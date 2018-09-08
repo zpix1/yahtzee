@@ -120,7 +120,7 @@ export default {
       dice: defaultDice(),
       combinations: combinations,
       scores: [{}, {}],
-      adjustments: true,
+      adjustments: false,
       showSettings: false
     }
   },
