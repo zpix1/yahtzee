@@ -7,7 +7,9 @@ import Vue from 'vue'
 import App from './App'
 
 import VuePersist from 'vue-persist'
+var longpress = require('vue-long-press-directive')
 
+Vue.use(longpress, { duration: 1000 })
 Vue.use(VuePersist)
 
 Vue.config.productionTip = false

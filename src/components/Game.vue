@@ -77,18 +77,21 @@
         </div>
       </div>
       <div class="buttons block">
-        <div class="buttons-panel">
-          <img class="settings-icon"
-            src="http://pngimage.net/wp-content/uploads/2018/06/setting-png-icon-.png"
-            @click="settings"
-          />
-          <button v-on:click="roll(false)" v-on: type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }">
-            {{ rollButtonMessage }}
-          </button>
-        </div>
+        <img class="settings-icon"
+          src="http://pngimage.net/wp-content/uploads/2018/06/setting-png-icon-.png"
+          @click="settings"
+        />
+        <button v-on:click="adsRoll" v-on: type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }">
+          {{ rollButtonMessage }}
+        </button>
       </div>
       <div v-bind:class="{'hidden-settings': !showSettings}" class="settings block">
-        123
+        <div>
+          Reset game <button class="danger" @click="confirmReset">RESET</button>
+        </div>
+        <div>
+          Adjustments <button v-bind:class="{success: adjustments}" @click="adjustments = !adjustments">{{ adjustments ? 'ON' : 'OFF' }}</button>
+        </div>
       </div>
     </div>
   </div>
@@ -96,7 +99,7 @@
 
 
 <script>
-import { defaultDice, combinations } from '../Constants'
+import { defaultDice, combinations } from '../constants'
 import { getRandomInt } from '../utility'
 import Dice from './Dice'
 
@@ -126,6 +129,15 @@ export default {
     calcCell: function (player, comb) {
       return this.rolled && this.playerTurn === player && this.scores[player][comb.id] === undefined ? comb.calc(this.dice) : undefined
     },
+    adsRoll: function (event) {
+      var g = event.clientX - event.target.getClientRects()[0].x
+      console.log(g)
+      if (g < 8 && this.adjustments) {
+        this.roll(true)
+      } else {
+        this.roll(false)
+      }
+    },
     roll: function (activate) {
       if (this.rollsLeft === 0) {
         return
@@ -136,8 +148,8 @@ export default {
 
       setTimeout(() => { this.willRoll = false }, 500)
 
-      if (this.adjustments && activate) {
-        var combs = this.combinations.filter((c) => this.scores[this.playerTurn][c.id] === undefined)
+      if (activate) {
+        var combs = this.combinations.filter((c) => this.scores[this.playerTurn][c.id] === undefined && c.id !== 13) // No chance pls
         var newDices = Array(this.dice.length)
         var allDices = []
 
@@ -145,9 +157,9 @@ export default {
           newDices[i] = Object.assign({}, this.dice[i])
         }
 
-        console.log(newDices.map((e) => e.type))
+        // console.log(newDices.map((e) => e.type))
 
-        for (var j = 0; j < 10000; j++) {
+        for (var j = 0; j < 100; j++) {
           var tempDices = newDices.map(e => Object.assign({}, e)).slice()
           for (i = 0; i < tempDices.length; i++) {
             if (!tempDices[i].used) {
@@ -170,7 +182,7 @@ export default {
           }
         }
 
-        console.log(ans)
+        // console.log(ans)
         for (i = 0; i < this.dice.length; i++) {
           var d = this.dice[i]
           if (!d.used) {
@@ -237,8 +249,13 @@ export default {
       this.dice = defaultDice()
       this.scores = [{}, {}]
     },
+    confirmReset: function () {
+      if (confirm('Are you sure you want to reset the game?')) {
+        this.reset()
+      }
+    },
     settings: function () {
-      this.showSettings = true
+      this.showSettings = !this.showSettings
     },
     winner: function () {
       var ended = true
