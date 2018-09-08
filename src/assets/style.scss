@@ -51,7 +51,7 @@ a {
 .settings {
   text-align: left;
   font-size: 20px;
-  font-family: Roboto;
+  // font-family: Roboto;
   margin: 10px;
 
   button {
@@ -59,7 +59,6 @@ a {
     border: none;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
     font-size: 16px;
     border-radius: 2px;
     float: right;
@@ -72,6 +71,9 @@ a {
   }
   button.success {
     background-color: #4CAF50;
+  }
+  button.info {
+    background-color: gray;
   }
 }
 

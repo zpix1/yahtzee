@@ -90,7 +90,7 @@
           Reset game <button class="danger" @click="confirmReset">RESET</button>
         </div>
         <div>
-          Adjustments <button v-bind:class="{success: adjustments}" @click="adjustments = !adjustments">{{ adjustments ? 'ON' : 'OFF' }}</button>
+          Adjustments <button v-bind:class="{success: adjustments, info: !adjustments}" @click="adjustments = !adjustments">{{ adjustments ? 'ON' : 'OFF' }}</button>
         </div>
       </div>
     </div>
