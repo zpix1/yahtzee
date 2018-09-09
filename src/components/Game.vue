@@ -72,8 +72,14 @@
       </div>
       <div class="dice block">
         Dice
-        <div class="dice-panel">
-          <Dice :dice="dice" :willRoll="willRoll"/>
+        <Dice :dice="dice" :willRoll="willRoll"/>
+      </div>
+      <div v-bind:class="{'hidden': !showSettings}" class="settings block">
+        <div>
+          Reset game <button class="danger" @click="confirmReset">RESET</button>
+        </div>
+        <div>
+          Adjustments <button v-bind:class="{success: adjustments, info: !adjustments}" @click="adjustments = !adjustments">{{ adjustments ? 'ON' : 'OFF' }}</button>
         </div>
       </div>
       <div class="buttons block">
@@ -85,14 +91,7 @@
           {{ rollButtonMessage }}
         </button>
       </div>
-      <div v-bind:class="{'hidden-settings': !showSettings}" class="settings block">
-        <div>
-          Reset game <button class="danger" @click="confirmReset">RESET</button>
-        </div>
-        <div>
-          Adjustments <button v-bind:class="{success: adjustments, info: !adjustments}" @click="adjustments = !adjustments">{{ adjustments ? 'ON' : 'OFF' }}</button>
-        </div>
-      </div>
+      
     </div>
   </div>
 </template>
