@@ -26,7 +26,7 @@ a {
 }
 
 .wrapper {
-  height: 100%;
+  // height: 100%;
   display: flex;
   flex-direction: column;
   background-color: $primary-color;
@@ -152,7 +152,7 @@ a {
 .scores-table {
   border-collapse: collapse;
   width: 100%;
-  min-height: 350px;
+  min-height: 300px;
   table-layout: fixed;
   empty-cells: hide;
 }
@@ -294,6 +294,11 @@ body {
 }
 
 @media screen and (max-width: 800px) {
+
+  .wrapper {
+    height: 100%;
+  }
+
   body {
     background-color: $primary-color;
   }
