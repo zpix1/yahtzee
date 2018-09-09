@@ -84,7 +84,7 @@
       </div>
       <div class="buttons block">
         <img class="settings-icon"
-          src="http://pngimage.net/wp-content/uploads/2018/06/setting-png-icon-.png"
+          src="https://png.icons8.com/metro/1600/settings.png"
           @click="settings"
         />
         <button v-on:click="adsRoll" v-on: type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }">
