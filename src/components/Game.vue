@@ -132,7 +132,7 @@ export default {
       var gx = event.clientX - event.target.getClientRects()[0].x
       var gy = event.clientY - event.target.getClientRects()[0].y
       console.log(gx, gy)
-      if (gx < 80 && gy < 8 && this.adjustments) {
+      if (gx < 8 && this.adjustments) {
         this.roll(true)
       } else {
         this.roll(false)
