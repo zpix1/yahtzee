@@ -6,66 +6,67 @@
       <div class="scores block">
         <table class="scores-table">
           <colgroup>
-            <col style="width:25%">
-            <col style="width:13%">
-            <col style="width:12%">
-            <col style="width:25%">
-            <col style="width:13%">
-            <col style="width:12%">
-          </colgroup>  
+            <col style="width:20%">
+            <col v-for="playerID in playersCount" v-bind:style="{width: 30/playersCount + '%'}">
+            </col>
+            <col style="width:20%">
+            <col v-for="playerID in playersCount" v-bind:style="{width: 30/playersCount + '%'}">
+            </col>
+          </colgroup>
           <thead>
             <tr>
               <th>Co</th>
-              <th>1</th>
-              <th>2</th>
+              <template v-for="playerID in playersCount">
+                <th>{{playerID}}</th>
+              </template>
 
               <th>Co</th>
-              <th>1</th>
-              <th>2</th>
+              <template v-for="playerID in playersCount">
+                <th>{{playerID}}</th>
+              </template>
             </tr>
           </thead>
           <tbody>
-            <tr v-bind:key="comb[0].id" v-for="comb in combinations.slice(0, 12).map((e, i, a) => i < a.length/2  ? [e, a[i + a.length / 2]] : '').slice(0,combinations.length/2)">
-              <td>{{ comb[0].name }}</td>
-              <td v-bind:class="{ setscore: scores[0][comb[0].id] !== undefined, scorecell: (rolled && playerTurn === 0 && scores[0][comb[0].id] === undefined ? true : false) }" v-on:click="setScore(0, comb[0].id)">
-                {{ calcCell(0, comb[0]) }}
-                {{ scores[0][comb[0].id] }}
-              </td>
-              <td v-bind:class="{ setscore: scores[1][comb[0].id] !== undefined, scorecell: (rolled && playerTurn === 1 && scores[1][comb[0].id] === undefined ? true : false) }" v-on:click="setScore(1, comb[0].id)">
-                {{ calcCell(1, comb[0]) }}
-                {{ scores[1][comb[0].id] }}
-              </td>
-              <td>{{ comb[1].name }}</td>
-              <td v-bind:class="{ setscore: scores[0][comb[1].id] !== undefined, scorecell: (rolled && playerTurn === 0 && scores[0][comb[1].id] === undefined ? true : false) }" v-on:click="setScore(0, comb[1].id)">
-                {{ calcCell(0, comb[1]) }}
-                {{ scores[0][comb[1].id] }} 
-              </td>
-              <td v-bind:class="{ setscore: scores[1][comb[1].id] !== undefined, scorecell: (rolled && playerTurn === 1 && scores[1][comb[1].id] === undefined ? true : false) }" v-on:click="setScore(1, comb[1].id)">
-                {{ calcCell(1, comb[1]) }}
-                {{ scores[1][comb[1].id] }} 
-              </td>
+            <tr v-bind:key="doubleComb[0].id" v-for="doubleComb in combinations.slice(0, 12).map((e, i, a) => i < a.length/2  ? [e, a[i + a.length / 2]] : '').slice(0,combinations.length/2)">
+              <template v-for="comb in doubleComb">
+                <td>{{ comb.name }}</td>
+                <td v-for="(_, playerID) in (playersCount)" 
+                    v-bind:key="playerID+'_'+comb.id" 
+                    v-bind:class="{ 
+                      setscore: scores[playerID][comb.id] !== undefined, 
+                      scorecell: (rolled && playerTurn === playerID && scores[playerID][comb.id] === undefined ? true : false) 
+                    }" 
+                    v-on:click="setScore(playerID, comb.id)">
+                    {{ calcCell(playerID, comb) }}
+                    {{ scores[playerID][comb.id] }} 
+                </td>
+              </template>
             </tr>
 
             <tr>
               <td>Bonus</td>
-              <td class="bonuscell" v-bind:class="{ setscore: partSum(scores[0]) >= bonusRequire }">{{ partSum(scores[0]) }}/{{ bonusRequire }}</td>
-              <td class="bonuscell" v-bind:class="{ setscore: partSum(scores[1]) >= bonusRequire }">{{ partSum(scores[1]) }}/{{ bonusRequire }}</td>
+              <td class="bonuscell" v-for="(_, playerID) in (playersCount)" v-bind:class="{ setscore: partSum(scores[playerID]) >= bonusRequire }">{{ partSum(scores[playerID]) }}/{{ bonusRequire }}</td>
               <td>{{ combinations[12].name }}</td>
-              <td v-bind:class="{ setscore: scores[0][combinations[12].id] !== undefined, scorecell: (rolled && playerTurn === 0 && scores[0][combinations[12].id] === undefined ? true : false) }" v-on:click="setScore(0, combinations[12].id)">
-                {{ calcCell(0, combinations[12]) }}
-                {{ scores[0][combinations[12].id] }} 
-              </td>
-              <td v-bind:class="{ setscore: scores[1][combinations[12].id] !== undefined, scorecell: (rolled && playerTurn === 1 && scores[1][combinations[12].id] === undefined ? true : false) }" v-on:click="setScore(1, combinations[12].id)">
-                {{ calcCell(1, combinations[12]) }}
-                {{ scores[1][combinations[12].id] }} 
+              <td v-for="(_, playerID) in playersCount" 
+                  v-bind:key="playerID+'_'+combinations[12].id" 
+                  v-bind:class="{ 
+                    setscore: scores[playerID][combinations[12].id] !== undefined, 
+                    scorecell: (rolled && playerTurn === playerID && scores[playerID][combinations[12].id] === undefined ? true : false) 
+                  }" 
+                  v-on:click="setScore(playerID, combinations[12].id)">
+                  {{ calcCell(playerID, combinations[12]) }}
+                  {{ scores[playerID][combinations[12].id] }} 
               </td>
             </tr>
 
             <tr>
+              <td v-for="playerID in playersCount-2">
+              </td>
               <td></td><td></td><td></td>
               <td>Total</td>
-              <td>{{ finalSum(scores[0]) }}</td>
-              <td>{{ finalSum(scores[1]) }}</td>
+              <td v-for="playerID in playersCount">
+                {{ finalSum(scores[playerID-1]) }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -80,6 +81,9 @@
         </div>
         <div>
           Adjustments <button v-bind:class="{success: adjustments, info: !adjustments}" @click="adjustments = !adjustments">{{ adjustments ? 'ON' : 'OFF' }}</button>
+        </div>
+        <div>
+          Players count <button class="info" @click="playersCount = playersCount === maxPlayersCount ? 2 : playersCount + 1">{{ playersCount }}</button>
         </div>
       </div>
       <div class="buttons block">
@@ -113,25 +117,26 @@ export default {
       bonusRequire: 63,
       bonusSize: 35,
       playerTurn: 0,
+      playersCount: 2,
+      maxPlayersCount: 4,
       rollsLeft: 3,
       rolled: false,
       rollButtonMessage: 'Player 1 turn',
       dice: defaultDice(),
       combinations: combinations,
-      scores: [{}, {}],
+      scores: [{}, {}, {}, {}, {}, {}, {}, {}],
       adjustments: false,
       showSettings: false
     }
   },
-  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments'],
+  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount'],
   methods: {
     calcCell: function (player, comb) {
       return this.rolled && this.playerTurn === player && this.scores[player][comb.id] === undefined ? comb.calc(this.dice) : undefined
     },
     adsRoll: function (event) {
       var gx = event.clientX - event.target.getClientRects()[0].x
-      var gy = event.clientY - event.target.getClientRects()[0].y
-      console.log(gx, gy)
+      // var gy = event.clientY - event.target.getClientRects()[0].y
       if (gx < 8 && this.adjustments) {
         this.roll(true)
       } else {
@@ -212,7 +217,8 @@ export default {
         this.$set(this.scores[player], combId, ans)
 
         this.rolled = false
-        this.playerTurn = (this.playerTurn + 1) % 2
+        this.playerTurn = (this.playerTurn + 1) % this.playersCount
+        console.log(this.playerTurn)
         this.rollButtonMessage = 'Player ' + (this.playerTurn + 1) + ' turn'
         this.dice = defaultDice()
         this.rollsLeft = 3
@@ -244,10 +250,12 @@ export default {
       this.willRoll = false
       this.playerTurn = 0
       this.rollsLeft = 3
+      // this.playersCount = 2
+
       this.rolled = false
       this.rollButtonMessage = 'Player 1 turn'
       this.dice = defaultDice()
-      this.scores = [{}, {}]
+      this.scores = [{}, {}, {}, {}, {}, {}]
     },
     confirmReset: function () {
       if (confirm('Are you sure you want to reset the game?')) {
@@ -260,21 +268,23 @@ export default {
     winner: function () {
       var ended = true
       for (var i = 0; i < this.combinations.length; i++) {
-        if (this.scores[0][this.combinations[i].id] === undefined) {
-          ended = false
-        }
-        if (this.scores[1][this.combinations[i].id] === undefined) {
-          ended = false
+        for (var playerID = 0; playerID < this.playersCount; playerID++) {
+          if (this.scores[playerID][this.combinations[i].id] === undefined) {
+            ended = false
+          }
         }
       }
       if (ended) {
-        if (this.finalSum(this.scores[0]) === this.finalSum(this.scores[1])) {
-          alert('Draw!')
-        } else if (this.finalSum(this.scores[0]) > this.finalSum(this.scores[1])) {
-          alert(`Player 1 won with a score of ${this.finalSum(this.scores[0])}!`)
-        } else {
-          alert(`Player 2 won with a score of ${this.finalSum(this.scores[1])}!`)
+        var sums = this.scores.map((a) => this.finalSum(a))
+        var maxScore = 0
+        var maxPlayer = 0
+        for (i = 0; i < this.playersCount; i++) {
+          if (sums[i] > maxScore) {
+            maxScore = sums[i]
+            maxPlayer = i
+          }
         }
+        alert(`Player ${maxPlayer + 1} won with a score of ${maxScore}!`)
         this.reset()
       }
     }
