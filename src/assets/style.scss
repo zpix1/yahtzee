@@ -149,10 +149,14 @@ a {
   background-image: url(../assets/d-6.png);
 }
 
+// .scores {
+//   flex-grow: 1;
+// }
+
 .scores-table {
   border-collapse: collapse;
   width: 100%;
-  min-height: 300px;
+  min-height: 350px;
   table-layout: fixed;
   empty-cells: hide;
 }

@@ -16,14 +16,14 @@
           <thead>
             <tr>
               <th>Co</th>
-              <template v-for="playerID in playersCount">
-                <th>{{playerID}}</th>
-              </template>
+              <th v-for="playerID in playersCount">
+                {{ playerID }}
+              </th>
 
               <th>Co</th>
-              <template v-for="playerID in playersCount">
-                <th>{{playerID}}</th>
-              </template>
+              <th v-for="playerID in playersCount">
+                {{ playerID }}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -75,6 +75,16 @@
         Dice
         <Dice :dice="dice" :willRoll="willRoll"/>
       </div>
+      
+      <div class="buttons block">
+        <img class="settings-icon"
+          src="https://png.icons8.com/metro/1600/settings.png"
+          @click="settings"
+        />
+        <button @mousedown="adsRoll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }">
+          {{ rollButtonMessage }}
+        </button>
+      </div>
       <div v-bind:class="{'hidden': !showSettings}" class="settings block">
         <div>
           Reset game <button class="danger" @click="confirmReset">RESET</button>
@@ -86,16 +96,6 @@
           Players count <button class="info" @click="playersCount = playersCount === maxPlayersCount ? 2 : playersCount + 1">{{ playersCount }}</button>
         </div>
       </div>
-      <div class="buttons block">
-        <img class="settings-icon"
-          src="https://png.icons8.com/metro/1600/settings.png"
-          @click="settings"
-        />
-        <button v-on:click="adsRoll" v-on: type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }">
-          {{ rollButtonMessage }}
-        </button>
-      </div>
-      
     </div>
   </div>
 </template>
