@@ -26,7 +26,7 @@ a {
 }
 
 .wrapper {
-  // height: 100%;
+  @extend .noselect;
   display: flex;
   flex-direction: column;
   background-color: $primary-color;
@@ -329,8 +329,8 @@ body {
   height: 0;
   border-style: solid;
   border-width: 20px 20px 0px 20px;
-  border-color: $desktop-color transparent transparent  transparent;
-
+  border-color: $desktop-color transparent transparent transparent;
+  
   transition: 0.4s;
   &.on {
     transform: rotate(180deg);
@@ -342,3 +342,15 @@ html, body, main, .main, #app {
 }
 
 html, body {margin: 0; height: 100%; overflow: hidden}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+
