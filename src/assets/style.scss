@@ -320,10 +320,21 @@ body {
 }
 
 .settings-icon {
-  width: 100%;
-  width: 43px;
-  height: 43px;
+  // width: 100%;
+  // width: 43px;
+  // height: 43px;
   margin: auto 0px auto 10px;
+
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 20px 20px 0px 20px;
+  border-color: $desktop-color transparent transparent  transparent;
+
+  transition: 0.4s;
+  &.on {
+    transform: rotate(180deg);
+  }
 }
 
 html, body, main, .main, #app {

@@ -8,6 +8,10 @@ export function defaultDice () {
   ]
 }
 
+export function defaultScores () {
+  return [{}, {}, {}, {}, {}, {}, {}, {}, {}]
+}
+
 function sumOfType (dice, type) {
   var ans = 0
   for (var i = 0; i < dice.length; i++) {

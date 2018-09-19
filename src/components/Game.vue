@@ -77,9 +77,10 @@
       </div>
       
       <div class="buttons block">
-        <img class="settings-icon"
-          src="https://png.icons8.com/metro/1600/settings.png"
+        <div class="settings-icon"
+          ssrc="https://png.icons8.com/metro/1600/settings.png"
           @click="settings"
+          v-bind:class="{ on: showSettings }"
         />
         <button @mousedown="adsRoll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }">
           {{ rollButtonMessage }}
@@ -90,10 +91,10 @@
           Reset game <button class="danger" @click="confirmReset">RESET</button>
         </div>
         <div>
-          Adjustments <button v-bind:class="{success: adjustments, info: !adjustments}" @click="adjustments = !adjustments">{{ adjustments ? 'ON' : 'OFF' }}</button>
+          Adjustments <button v-bind:class="{success: adjustments, info: !adjustments}" @click="askForReset() ? adjustments = !adjustments : null">{{ adjustments ? 'ON' : 'OFF' }}</button>
         </div>
         <div>
-          Players count <button class="info" @click="playersCount = playersCount === maxPlayersCount ? 2 : playersCount + 1">{{ playersCount }}</button>
+          Players count <button class="info" @click="incPlayersCount">{{ playersCount }}</button>
         </div>
       </div>
     </div>
@@ -102,7 +103,7 @@
 
 
 <script>
-import { defaultDice, combinations } from '../constants'
+import { defaultDice, defaultScores, combinations } from '../constants'
 import { getRandomInt } from '../utility'
 import Dice from './Dice'
 
@@ -124,17 +125,19 @@ export default {
       rollButtonMessage: 'Player 1 turn',
       dice: defaultDice(),
       combinations: combinations,
-      scores: [{}, {}, {}, {}, {}, {}, {}, {}],
+      scores: defaultScores(),
       adjustments: false,
-      showSettings: false
+      showSettings: false,
+      resetted: true
     }
   },
-  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount'],
+  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted'],
   methods: {
     calcCell: function (player, comb) {
       return this.rolled && this.playerTurn === player && this.scores[player][comb.id] === undefined ? comb.calc(this.dice) : undefined
     },
     adsRoll: function (event) {
+      this.resetted = false
       var gx = event.clientX - event.target.getClientRects()[0].x
       // var gy = event.clientY - event.target.getClientRects()[0].y
       if (gx < 8 && this.adjustments) {
@@ -144,6 +147,7 @@ export default {
       }
     },
     roll: function (activate) {
+      this.resetted = false
       if (this.rollsLeft === 0) {
         return
       }
@@ -218,7 +222,7 @@ export default {
 
         this.rolled = false
         this.playerTurn = (this.playerTurn + 1) % this.playersCount
-        console.log(this.playerTurn)
+
         this.rollButtonMessage = 'Player ' + (this.playerTurn + 1) + ' turn'
         this.dice = defaultDice()
         this.rollsLeft = 3
@@ -250,12 +254,12 @@ export default {
       this.willRoll = false
       this.playerTurn = 0
       this.rollsLeft = 3
-      // this.playersCount = 2
+      this.resetted = true
 
       this.rolled = false
       this.rollButtonMessage = 'Player 1 turn'
       this.dice = defaultDice()
-      this.scores = [{}, {}, {}, {}, {}, {}]
+      this.scores = defaultScores()
     },
     confirmReset: function () {
       if (confirm('Are you sure you want to reset the game?')) {
@@ -264,6 +268,21 @@ export default {
     },
     settings: function () {
       this.showSettings = !this.showSettings
+    },
+    askForReset: function () {
+      if (!this.resetted) {
+        if (confirm('You have to reset score before change. Reset & continue?')) {
+          this.reset()
+        } else {
+          return false
+        }
+      }
+      return true
+    },
+    incPlayersCount () {
+      if (this.askForReset()) {
+        this.playersCount = this.playersCount === this.maxPlayersCount ? 2 : this.playersCount + 1
+      }
     },
     winner: function () {
       var ended = true
