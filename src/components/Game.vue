@@ -1,35 +1,35 @@
 <template>
   <div class="main">
-    <h1 class="header">Yahtzee</h1>
-    
+    <h1 class="header">Yahtzee <a @click="toggleModal">Info</a></h1>
+  <v-dialog/>
     <div class="wrapper card">
       <div class="scores block">
         <table class="scores-table">
           <colgroup>
             <col style="width:20%">
-            <col v-for="playerID in playersCount" v-bind:style="{width: 30/playersCount + '%'}" :key="playerID">
-            <!-- </col> -->
+            <col v-for="playerID in playersCount" v-bind:style="{width: 30/playersCount + '%'}">
+            </col>
             <col style="width:20%">
-            <col v-for="playerID in playersCount" v-bind:style="{width: 30/playersCount + '%'}" :key="playerID">
-            <!-- </col> -->
+            <col v-for="playerID in playersCount" v-bind:style="{width: 30/playersCount + '%'}">
+            </col>
           </colgroup>
           <thead>
             <tr>
               <th>Co</th>
-              <th v-for="playerID in playersCount" :key="playerID">
-                {{ playerID }}
+              <th v-for="playerID in playersCount">
+                {{ playerName(playerID) }}
               </th>
 
               <th>Co</th>
-              <th v-for="playerID in playersCount" :key="playerID">
-                {{ playerID }}
+              <th v-for="playerID in playersCount">
+                {{ playerName(playerID) }}
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-bind:key="doubleComb[0].id" v-for="doubleComb in combinations.slice(0, 12).map((e, i, a) => i < a.length/2  ? [e, a[i + a.length / 2]] : '').slice(0,combinations.length/2)">
               <template v-for="comb in doubleComb">
-                <td :key="comb.name">{{ comb.name }}</td>
+                <td>{{ comb.name }}</td>
                 <td v-for="(_, playerID) in (playersCount)" 
                     v-bind:key="playerID+'_'+comb.id" 
                     v-bind:class="{ 
@@ -45,7 +45,7 @@
 
             <tr>
               <td>Bonus</td>
-              <td class="bonuscell" v-for="(_, playerID) in (playersCount)" v-bind:class="{ setscore: partSum(scores[playerID]) >= bonusRequire }" :key="playerID">{{ partSum(scores[playerID]) }}/{{ bonusRequire }}</td>
+              <td class="bonuscell" v-for="(_, playerID) in (playersCount)" v-bind:class="{ setscore: partSum(scores[playerID]) >= bonusRequire }">{{ partSum(scores[playerID]) }}/{{ bonusRequire }}</td>
               <td>{{ combinations[12].name }}</td>
               <td v-for="(_, playerID) in playersCount" 
                   v-bind:key="playerID+'_'+combinations[12].id" 
@@ -60,11 +60,11 @@
             </tr>
 
             <tr>
-              <td v-for="playerID in playersCount-2" :key="playerID">
+              <td v-for="playerID in playersCount-2">
               </td>
               <td></td><td></td><td></td>
               <td>Total</td>
-              <td v-for="playerID in playersCount" :key="playerID">
+              <td v-for="playerID in playersCount">
                 {{ finalSum(scores[playerID-1]) }}
               </td>
             </tr>
@@ -73,16 +73,15 @@
       </div>
       <div class="dice block">
         Dice
-        <Dice :dice="dice" :willRoll="willRoll"/>
+        <Dice :dice="dice" :willRoll="willRoll" :disabled="isAITurn"/>
       </div>
       
       <div class="buttons block">
         <div class="settings-icon"
-          ssrc="https://png.icons8.com/metro/1600/settings.png"
           @click="settings"
           v-bind:class="{ on: showSettings }"
-        />
-        <button @mousedown="adsRoll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: rollsLeft === 0, red: rollsLeft === 0, blue: rollsLeft > 0 }">
+        ></div>
+        <button @mousedown="adsRoll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: (rollsLeft === 0) || isAITurn, red: (rollsLeft === 0), blue: (rollsLeft > 0) }">
           {{ rollButtonMessage }}
         </button>
       </div>
@@ -94,7 +93,10 @@
           Adjustments <button v-bind:class="{success: adjustments, info: !adjustments}" @click="askForReset() ? adjustments = !adjustments : null">{{ adjustments ? 'ON' : 'OFF' }}</button>
         </div>
         <div>
-          Players count <button class="info" @click="incPlayersCount">{{ playersCount }}</button>
+          Players count <button class="info" @click="incPlayersCount">{{ isVsAI ? 'AI' : playersCount }}</button>
+        </div>
+        <div>
+          About <button class="info" @click="toggleModal">about</button>
         </div>
       </div>
     </div>
@@ -104,8 +106,33 @@
 
 <script>
 import { defaultDice, defaultScores, combinations } from '../constants'
-import { getRandomInt } from '../utility'
+import { getRandomInt, AboutPage } from '../utility'
 import Dice from './Dice'
+
+String.prototype.count = function(s1) { 
+    return (this.length - this.replace(new RegExp(s1,"g"), '').length) / s1.length;
+}
+
+function combRep(arr, l) {
+  if(l === void 0) l = arr.length; // Length of the combinations
+  var data = Array(l),             // Used to store state
+      results = [];                // Array of results
+  (function f(pos, start) {        // Recursive function
+    if(pos === l) {                // End reached
+      results.push(data.slice());  // Add a copy of data to results
+      return;
+    }
+    for(var i=start; i<arr.length; ++i) {
+      data[pos] = arr[i];          // Update data
+      f(pos+1, i);                 // Call f recursively
+    }
+  })(0, 0);                        // Start at index 0
+  return results;                  // Return results
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 export default {
   name: 'game',
@@ -122,21 +149,46 @@ export default {
       maxPlayersCount: 4,
       rollsLeft: 3,
       rolled: false,
-      rollButtonMessage: 'Player 1 turn',
+      rollButtonMessage: 'P1 turn',
       dice: defaultDice(),
       combinations: combinations,
       scores: defaultScores(),
       adjustments: false,
       showSettings: false,
-      resetted: true
+      resetted: true,
+      isVsAI: false,
+      isAITurn: false,
+      infoModal: false
     }
   },
-  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted'],
+  mounted: function () {
+    // this.reset();
+    // this.playerTurn = 1;
+    // this.isAITurn = true;
+    // this.isAITurn = true;
+    // this.AITurn();
+  },
+  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
+    toggleModal: function() {
+      this.$modal.show('dialog', {
+        title: 'About Yahtzee',
+        text: AboutPage()
+      })
+    },
+    playerName: function(playerID) {
+      if (this.isVsAI && playerID === 2) {
+        return 'AI'
+      } else {
+        return `P${playerID}`
+      }
+    },
     calcCell: function (player, comb) {
       return this.rolled && this.playerTurn === player && this.scores[player][comb.id] === undefined ? comb.calc(this.dice) : undefined
     },
     adsRoll: function (event) {
+      if (this.isAITurn)
+        return
       this.resetted = false
       var gx = event.clientX - event.target.getClientRects()[0].x
       // var gy = event.clientY - event.target.getClientRects()[0].y
@@ -207,13 +259,103 @@ export default {
         }
       }
       const throwsLeft = --this.rollsLeft
-      this.rollButtonMessage = throwsLeft === 1 ? '1 throw left' : `${throwsLeft} throws left`
+      this.rollButtonMessage = (throwsLeft === 1 ? '1 roll left' : `${throwsLeft} rolls left`) + ` ${this.isAITurn ? "(AI)" : ""}`
 
       if (this.rollsLeft === 0) {
-        this.rollButtonMessage = 'No throws left'
+        this.rollButtonMessage = 'No rolls left' + ` ${this.isAITurn ? "(AI)" : ""}`
       }
     },
-    setScore: function (player, combId) {
+    AITurn: async function () {
+      const combRelativeCalc = (comb, dice) => {
+        return comb.calc(dice) / comb.maxValue
+      }
+      const maxCombScore = (dice) => {
+        let maxS = 0
+        for (let i = 0; i < this.combinations.length - 1; i++) {
+          let comb = this.combinations[i]
+          if (combRelativeCalc(comb, dice) > maxS && this.scores[player][comb.id] === undefined) {
+            maxS = combRelativeCalc(comb, dice)
+          }
+        }
+        return maxS
+      }
+      const player = this.playerTurn;
+      const bestCombinations = [12, 10, 11, 9];
+      for (let rollID = 0; rollID < 3; rollID++) {
+        this.roll(this.adjustments);
+        await sleep(1000);
+        // Check for the evidently best combinations
+        for (let i = 0; i < bestCombinations.length; i++) {
+          let comb = this.getCombById(bestCombinations[i])
+          if (combRelativeCalc(comb, this.dice) != 0 && this.scores[player][comb.id] === undefined) {
+            console.log("AI found the best comb: ", comb.name)
+            this.setScore(player, comb.id)
+            this.isAITurn = false
+            return
+          }
+        }
+        // Bruteforce the best approach
+        var actions = [[], [1], [2], [3], [4], [5], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5], [4, 5], [1, 2, 3], [1, 2, 4], [1, 2, 5], [1, 3, 4], [1, 3, 5], [1, 4, 5], [2, 3, 4], [2, 3, 5], [2, 4, 5], [3, 4, 5], [1, 2, 3, 4], [1, 2, 3, 5], [1, 2, 4, 5], [1, 3, 4, 5], [2, 3, 4, 5], [1, 2, 3, 4, 5]]
+        let maxAverage = 0;
+        let maxAction = null;
+        for (let i = 0; i < actions.length; i++) {
+          let allSum = 0;
+          let allNumber = 0;
+          let outcomes = combRep([1,2,3,4,5], 5 - actions[i].length)
+          for (let ouI = 0; ouI < outcomes.length; ouI++) {
+            let newDice = JSON.parse(JSON.stringify(this.dice))
+            let usedOut = 0;
+            for (let di = 0; di < 5; di++) {
+              if (!actions[i].includes(di+1)) {
+                newDice[di].type = outcomes[ouI][usedOut];
+                usedOut++;
+              }
+            }
+            // for (let acI = 0; acI < actions[i].length; acI++) {
+            //   newDice[actions[i][acI] - 1].type = outcomes[ouI][acI];
+            // }
+            allNumber++;
+            allSum += maxCombScore(newDice)
+            // console.log(newDice.map((x) => x.type ))
+          }
+          
+          let cAverage = allSum / allNumber
+          // console.log(cAverage)
+          if (cAverage >= maxAverage) {
+            maxAverage = cAverage
+            maxAction = actions[i]
+          }
+        }
+        console.log("current ma: ", maxAverage, maxAction)
+        if (maxAction.length == 5) {
+          break
+        }
+        if (rollID != 2) {
+          for (let i = 0; i < 5; i++) {
+            this.dice[i].used = false
+          }
+          for (let i = 0; i < maxAction.length; i++) {
+            await sleep(1000);
+            this.dice[maxAction[i]-1].used = true
+          }
+        }
+        await sleep(1000);
+      }
+
+      let maxS = 0
+      let maxC = null
+      for (let i = 0; i < this.combinations.length; i++) {
+        let comb = this.combinations[i]
+        if (combRelativeCalc(comb, this.dice) > maxS && this.scores[player][comb.id] === undefined) {
+          maxS = combRelativeCalc(comb, this.dice)
+          maxC = comb
+        }
+      }
+      this.setScore(player, maxC.id)
+
+      this.isAITurn = false;
+    },
+    setScore: async function (player, combId) {
       if ((this.rolled) && (player === this.playerTurn) && (!this.scores[player].hasOwnProperty(combId))) {
         var comb = this.combinations.find(e => e.id === combId)
 
@@ -223,11 +365,16 @@ export default {
         this.rolled = false
         this.playerTurn = (this.playerTurn + 1) % this.playersCount
 
-        this.rollButtonMessage = 'Player ' + (this.playerTurn + 1) + ' turn'
+        this.rollButtonMessage = this.playerName(this.playerTurn + 1) + ' turn'
         this.dice = defaultDice()
         this.rollsLeft = 3
 
         this.winner()
+
+        if (this.playerTurn === 1 && this.isVsAI) {
+          this.isAITurn = true
+          this.AITurn()
+        }
       }
     },
     partSum: function (obj) {
@@ -255,7 +402,7 @@ export default {
       this.playerTurn = 0
       this.rollsLeft = 3
       this.resetted = true
-
+      this.isAITurn = false
       this.rolled = false
       this.rollButtonMessage = 'Player 1 turn'
       this.dice = defaultDice()
@@ -281,7 +428,14 @@ export default {
     },
     incPlayersCount () {
       if (this.askForReset()) {
-        this.playersCount = this.playersCount === this.maxPlayersCount ? 2 : this.playersCount + 1
+        if (this.playersCount == this.maxPlayersCount) {
+          this.playersCount = 2
+          this.isVsAI = true
+        } else {
+          this.playersCount += 1
+          this.isVsAI = false
+        }
+        // this.playersCount = this.playersCount === this.maxPlayersCount ? 2 : this.playersCount + 1
       }
     },
     winner: function () {
@@ -303,8 +457,15 @@ export default {
             maxPlayer = i
           }
         }
-        alert(`Player ${maxPlayer + 1} won with a score of ${maxScore}!`)
+        alert(`${this.playerName(maxPlayer + 1)} won with a score of ${maxScore}!`)
         this.reset()
+      }
+    },
+    getCombById(id) {
+      for (let i = 0; i < this.combinations.length; i++) {
+        if (this.combinations[i].id == id) {
+          return this.combinations[i];
+        }
       }
     }
   }

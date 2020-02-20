@@ -5,7 +5,9 @@ import './assets/style.scss'
 
 import Vue from 'vue'
 import App from './App'
-
+import VModal from 'vue-js-modal'
+ 
+Vue.use(VModal, { dialog: true })
 import VuePersist from 'vue-persist'
 var longpress = require('vue-long-press-directive')
 
