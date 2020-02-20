@@ -7,21 +7,21 @@
         <table class="scores-table">
           <colgroup>
             <col style="width:20%">
-            <col v-for="playerID in playersCount" v-bind:style="{width: 30/playersCount + '%'}">
-            </col>
+            <col v-for="playerID in playersCount" v-bind:style="{width: 30/playersCount + '%'}" :key="playerID">
+            <!-- </col> -->
             <col style="width:20%">
-            <col v-for="playerID in playersCount" v-bind:style="{width: 30/playersCount + '%'}">
-            </col>
+            <col v-for="playerID in playersCount" v-bind:style="{width: 30/playersCount + '%'}" :key="playerID">
+            <!-- </col> -->
           </colgroup>
           <thead>
             <tr>
               <th>Co</th>
-              <th v-for="playerID in playersCount">
+              <th v-for="playerID in playersCount" :key="playerID">
                 {{ playerID }}
               </th>
 
               <th>Co</th>
-              <th v-for="playerID in playersCount">
+              <th v-for="playerID in playersCount" :key="playerID">
                 {{ playerID }}
               </th>
             </tr>
@@ -29,7 +29,7 @@
           <tbody>
             <tr v-bind:key="doubleComb[0].id" v-for="doubleComb in combinations.slice(0, 12).map((e, i, a) => i < a.length/2  ? [e, a[i + a.length / 2]] : '').slice(0,combinations.length/2)">
               <template v-for="comb in doubleComb">
-                <td>{{ comb.name }}</td>
+                <td :key="comb.name">{{ comb.name }}</td>
                 <td v-for="(_, playerID) in (playersCount)" 
                     v-bind:key="playerID+'_'+comb.id" 
                     v-bind:class="{ 
@@ -45,7 +45,7 @@
 
             <tr>
               <td>Bonus</td>
-              <td class="bonuscell" v-for="(_, playerID) in (playersCount)" v-bind:class="{ setscore: partSum(scores[playerID]) >= bonusRequire }">{{ partSum(scores[playerID]) }}/{{ bonusRequire }}</td>
+              <td class="bonuscell" v-for="(_, playerID) in (playersCount)" v-bind:class="{ setscore: partSum(scores[playerID]) >= bonusRequire }" :key="playerID">{{ partSum(scores[playerID]) }}/{{ bonusRequire }}</td>
               <td>{{ combinations[12].name }}</td>
               <td v-for="(_, playerID) in playersCount" 
                   v-bind:key="playerID+'_'+combinations[12].id" 
@@ -60,11 +60,11 @@
             </tr>
 
             <tr>
-              <td v-for="playerID in playersCount-2">
+              <td v-for="playerID in playersCount-2" :key="playerID">
               </td>
               <td></td><td></td><td></td>
               <td>Total</td>
-              <td v-for="playerID in playersCount">
+              <td v-for="playerID in playersCount" :key="playerID">
                 {{ finalSum(scores[playerID-1]) }}
               </td>
             </tr>
