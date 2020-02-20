@@ -96,6 +96,9 @@
           players count <button class="info" @click="incPlayersCount">{{ isVsAI ? 'AI' : playersCount }}</button>
         </div>
         <div>
+          AIvsAI <button class="info" @click="startAIvsAI">fight</button>
+        </div>
+        <div>
           about <button class="info" @click="toggleModal('about')">about</button>
         </div>
       </div>
@@ -141,7 +144,7 @@ export default {
   },
   data () {
     return {
-      aispeed: 500,
+      aispeed: localStorage.getItem('aispeed') || 500,
       willRoll: false,
       bonusRequire: 63,
       bonusSize: 35,
@@ -159,7 +162,8 @@ export default {
       resetted: true,
       isVsAI: false,
       isAITurn: false,
-      infoModal: false
+      infoModal: false,
+      AIvsAI: false
     }
   },
   mounted: function () {
@@ -169,7 +173,7 @@ export default {
     // this.isAITurn = true;
     // this.AITurn();
   },
-  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
+  persist: ['AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
     toggleModal: function(x) {
       let textHTML = x == 'about' ? AboutPage() : x == 'rules' ? RulesPage() : x == 'scores' ? ScoringPage() : ''
@@ -187,7 +191,9 @@ export default {
 // })
     },
     playerName: function(playerID) {
-      if (this.isVsAI && playerID === 2) {
+      if (this.AIvsAI) {
+        return `AI${playerID}`
+      } else if (this.isVsAI && playerID === 2) {
         return 'AI'
       } else {
         return `P${playerID}`
@@ -281,16 +287,19 @@ export default {
       }
       const maxCombScore = (dice) => {
         let maxS = 0
+        let maxC = null
         for (let i = 0; i < this.combinations.length - 1; i++) {
           let comb = this.combinations[i]
           if (combRelativeCalc(comb, dice) > maxS && this.scores[player][comb.id] === undefined) {
             maxS = combRelativeCalc(comb, dice)
+            maxC = comb
           }
         }
+        // console.log(dice.map((x) => x.type), maxC.name)
         return maxS
       }
       const player = this.playerTurn;
-      const bestCombinations = [12, 10, 11, 9];
+      const bestCombinations = [12, 11, 10, 9];
       for (let rollID = 0; rollID < 3; rollID++) {
         this.roll(this.adjustments);
         await sleep(this.aispeed);
@@ -299,6 +308,8 @@ export default {
           let comb = this.getCombById(bestCombinations[i])
           if (combRelativeCalc(comb, this.dice) != 0 && this.scores[player][comb.id] === undefined) {
             console.log("AI found the best comb: ", comb.name)
+            
+            await sleep(this.aispeed)
             this.setScore(player, comb.id)
             this.isAITurn = false
             return
@@ -389,7 +400,7 @@ export default {
 
         this.winner()
 
-        if (this.playerTurn === 1 && this.isVsAI) {
+        if ((this.isVsAI && this.playerTurn == 1) || (this.AIvsAI)) {
           this.isAITurn = true
           this.AITurn()
         }
@@ -416,6 +427,7 @@ export default {
       return ans
     },
     reset: function () {
+      this.AIvsAI = false
       this.willRoll = false
       this.playerTurn = 0
       this.rollsLeft = 3
@@ -443,6 +455,14 @@ export default {
         }
       }
       return true
+    },
+    startAIvsAI(){
+      if (this.askForReset()) {
+        this.playersCount = 2;
+        this.AIvsAI = true;
+        this.isVsAI = true;
+        this.AITurn();
+      }
     },
     incPlayersCount () {
       if (this.askForReset()) {

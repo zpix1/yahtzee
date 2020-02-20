@@ -60,7 +60,7 @@ export const combinations = [
     group: 0,
     id: 1,
     name: 'ones',
-    maxValue: 3,
+    maxValue: 5,
     calc: function (dice) {
       return sumOfType(dice, 1)
     }
@@ -68,7 +68,7 @@ export const combinations = [
     group: 0,
     id: 2,
     name: 'twos',
-    maxValue: 5,
+    maxValue: 10,
     calc: function (dice) {
       return sumOfType(dice, 2)
     }
@@ -76,7 +76,7 @@ export const combinations = [
     group: 0,
     id: 3,
     name: 'threes',
-    maxValue: 7,
+    maxValue: 15,
     calc: function (dice) {
       return sumOfType(dice, 3)
     }
@@ -84,7 +84,7 @@ export const combinations = [
     group: 0,
     id: 4,
     name: 'fours',
-    maxValue: 10,
+    maxValue: 20,
     calc: function (dice) {
       return sumOfType(dice, 4)
     }
@@ -92,7 +92,7 @@ export const combinations = [
     group: 0,
     id: 5,
     name: 'fives',
-    maxValue: 15,
+    maxValue: 25,
     calc: function (dice) {
       return sumOfType(dice, 5)
     }
@@ -100,7 +100,7 @@ export const combinations = [
     group: 0,
     id: 6,
     name: 'sixes',
-    maxValue: 20,
+    maxValue: 30,
     calc: function (dice) {
       return sumOfType(dice, 6)
     }
