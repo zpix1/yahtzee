@@ -59,7 +59,7 @@ export const combinations = [
   {
     group: 0,
     id: 1,
-    name: 'Ones',
+    name: 'ones',
     maxValue: 3,
     calc: function (dice) {
       return sumOfType(dice, 1)
@@ -67,7 +67,7 @@ export const combinations = [
   }, {
     group: 0,
     id: 2,
-    name: 'Twos',
+    name: 'twos',
     maxValue: 5,
     calc: function (dice) {
       return sumOfType(dice, 2)
@@ -75,7 +75,7 @@ export const combinations = [
   }, {
     group: 0,
     id: 3,
-    name: 'Threes',
+    name: 'threes',
     maxValue: 7,
     calc: function (dice) {
       return sumOfType(dice, 3)
@@ -83,7 +83,7 @@ export const combinations = [
   }, {
     group: 0,
     id: 4,
-    name: 'Fours',
+    name: 'fours',
     maxValue: 10,
     calc: function (dice) {
       return sumOfType(dice, 4)
@@ -91,7 +91,7 @@ export const combinations = [
   }, {
     group: 0,
     id: 5,
-    name: 'Fives',
+    name: 'fives',
     maxValue: 15,
     calc: function (dice) {
       return sumOfType(dice, 5)
@@ -99,7 +99,7 @@ export const combinations = [
   }, {
     group: 0,
     id: 6,
-    name: 'Sixes',
+    name: 'sixes',
     maxValue: 20,
     calc: function (dice) {
       return sumOfType(dice, 6)
@@ -133,7 +133,7 @@ export const combinations = [
   }, {
     group: 1,
     id: 9,
-    name: 'Full House',
+    name: 'full house',
     maxValue: 25,
     calc: function (dice) {
       let arr = Object.values(getMap(dice)).filter(Number)
@@ -147,7 +147,7 @@ export const combinations = [
   }, {
     group: 1,
     id: 10,
-    name: 'Small straight',
+    name: 'small straight',
     maxValue: 30,
     calc: function (dice) {
       let possibleCombs = [
@@ -173,7 +173,7 @@ export const combinations = [
   }, {
     group: 1,
     id: 11,
-    name: 'Large straight',
+    name: 'large straight',
     maxValue: 40,
     calc: function (dice) {
       let possibleCombs = [
@@ -198,7 +198,7 @@ export const combinations = [
   }, {
     group: 1,
     id: 12,
-    name: 'Yahtzee',
+    name: 'yahtzee',
     maxValue: 50,
     calc: function (dice) {
       let arr = Object.values(getMap(dice))
@@ -212,7 +212,7 @@ export const combinations = [
     group: 1,
     id: 13,
     maxValue: 25,
-    name: 'Chance',
+    name: 'chance',
     calc: sumOfAll
   }
 ]

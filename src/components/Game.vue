@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <h1 class="header">Yahtzee <a @click="toggleModal">Info</a></h1>
-  <v-dialog/>
+    <h1 class="header">Yahtzee <a @click="toggleModal('about')">Info</a></h1>
+  <!-- <v-dialog/> -->
     <div class="wrapper card">
       <div class="scores block">
         <table class="scores-table">
@@ -15,12 +15,12 @@
           </colgroup>
           <thead>
             <tr>
-              <th>Co</th>
+              <th>co</th>
               <th v-for="playerID in playersCount">
                 {{ playerName(playerID) }}
               </th>
 
-              <th>Co</th>
+              <th>co</th>
               <th v-for="playerID in playersCount">
                 {{ playerName(playerID) }}
               </th>
@@ -44,7 +44,7 @@
             </tr>
 
             <tr>
-              <td>Bonus</td>
+              <td>bonus</td>
               <td class="bonuscell" v-for="(_, playerID) in (playersCount)" v-bind:class="{ setscore: partSum(scores[playerID]) >= bonusRequire }">{{ partSum(scores[playerID]) }}/{{ bonusRequire }}</td>
               <td>{{ combinations[12].name }}</td>
               <td v-for="(_, playerID) in playersCount" 
@@ -63,7 +63,7 @@
               <td v-for="playerID in playersCount-2">
               </td>
               <td></td><td></td><td></td>
-              <td>Total</td>
+              <td>total</td>
               <td v-for="playerID in playersCount">
                 {{ finalSum(scores[playerID-1]) }}
               </td>
@@ -72,7 +72,7 @@
         </table>
       </div>
       <div class="dice block">
-        Dice
+        dice
         <Dice :dice="dice" :willRoll="willRoll" :disabled="isAITurn"/>
       </div>
       
@@ -87,26 +87,26 @@
       </div>
       <div v-bind:class="{'hidden': !showSettings}" class="settings block">
         <div>
-          Reset game <button class="danger" @click="confirmReset">RESET</button>
+          reset game <button class="danger" @click="confirmReset">RESET</button>
         </div>
         <div>
-          Adjustments <button v-bind:class="{success: adjustments, info: !adjustments}" @click="askForReset() ? adjustments = !adjustments : null">{{ adjustments ? 'ON' : 'OFF' }}</button>
+          adjustments <button v-bind:class="{success: adjustments, info: !adjustments}" @click="askForReset() ? adjustments = !adjustments : null">{{ adjustments ? 'ON' : 'OFF' }}</button>
         </div>
         <div>
-          Players count <button class="info" @click="incPlayersCount">{{ isVsAI ? 'AI' : playersCount }}</button>
+          players count <button class="info" @click="incPlayersCount">{{ isVsAI ? 'AI' : playersCount }}</button>
         </div>
         <div>
-          About <button class="info" @click="toggleModal">about</button>
+          about <button class="info" @click="toggleModal('about')">about</button>
         </div>
       </div>
-    </div>
+    </div><v-dialog/>
   </div>
 </template>
 
 
 <script>
 import { defaultDice, defaultScores, combinations } from '../constants'
-import { getRandomInt, AboutPage } from '../utility'
+import { getRandomInt, AboutPage, RulesPage, ScoringPage } from '../utility'
 import Dice from './Dice'
 
 String.prototype.count = function(s1) { 
@@ -170,11 +170,20 @@ export default {
   },
   persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
-    toggleModal: function() {
-      this.$modal.show('dialog', {
-        title: 'About Yahtzee',
-        text: AboutPage()
+    toggleModal: function(x) {
+      let textHTML = x == 'about' ? AboutPage() : x == 'rules' ? RulesPage() : x == 'scores' ? ScoringPage() : ''
+      textHTML = `<div>${textHTML}</div>`
+      this.$modal.show('dialog',{
+        text: textHTML,
+        title: x
       })
+  //     this.$modal.show({
+  //       title: x,
+  //       text: 
+  //       ,scrollable: true,height: 'auto'
+  //     }, {
+  // height: 'auto',scrollable: true,
+// })
     },
     playerName: function(playerID) {
       if (this.isVsAI && playerID === 2) {
@@ -262,7 +271,7 @@ export default {
       this.rollButtonMessage = (throwsLeft === 1 ? '1 roll left' : `${throwsLeft} rolls left`) + ` ${this.isAITurn ? "(AI)" : ""}`
 
       if (this.rollsLeft === 0) {
-        this.rollButtonMessage = 'No rolls left' + ` ${this.isAITurn ? "(AI)" : ""}`
+        this.rollButtonMessage = 'no rolls left' + ` ${this.isAITurn ? "(AI)" : ""}`
       }
     },
     AITurn: async function () {
