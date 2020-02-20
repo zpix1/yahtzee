@@ -138,6 +138,9 @@ webpackJsonp([1],[
 //
 //
 //
+//
+//
+//
 
 
 
@@ -178,7 +181,7 @@ function sleep(ms) {
   },
   data() {
     return {
-      aispeed: 500,
+      aispeed: localStorage.getItem('aispeed') || 500,
       willRoll: false,
       bonusRequire: 63,
       bonusSize: 35,
@@ -196,7 +199,8 @@ function sleep(ms) {
       resetted: true,
       isVsAI: false,
       isAITurn: false,
-      infoModal: false
+      infoModal: false,
+      AIvsAI: false
     };
   },
   mounted: function () {
@@ -206,7 +210,7 @@ function sleep(ms) {
     // this.isAITurn = true;
     // this.AITurn();
   },
-  persist: ['scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
+  persist: ['AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
     toggleModal: function (x) {
       let textHTML = x == 'about' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["a" /* AboutPage */])() : x == 'rules' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["b" /* RulesPage */])() : x == 'scores' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["c" /* ScoringPage */])() : '';
@@ -224,7 +228,9 @@ function sleep(ms) {
       // })
     },
     playerName: function (playerID) {
-      if (this.isVsAI && playerID === 2) {
+      if (this.AIvsAI) {
+        return `AI${playerID}`;
+      } else if (this.isVsAI && playerID === 2) {
         return 'AI';
       } else {
         return `P${playerID}`;
@@ -319,16 +325,19 @@ function sleep(ms) {
       };
       const maxCombScore = dice => {
         let maxS = 0;
+        let maxC = null;
         for (let i = 0; i < this.combinations.length - 1; i++) {
           let comb = this.combinations[i];
           if (combRelativeCalc(comb, dice) > maxS && this.scores[player][comb.id] === undefined) {
             maxS = combRelativeCalc(comb, dice);
+            maxC = comb;
           }
         }
+        // console.log(dice.map((x) => x.type), maxC.name)
         return maxS;
       };
       const player = this.playerTurn;
-      const bestCombinations = [12, 10, 11, 9];
+      const bestCombinations = [12, 11, 10, 9];
       for (let rollID = 0; rollID < 3; rollID++) {
         this.roll(this.adjustments);
         await sleep(this.aispeed);
@@ -337,6 +346,8 @@ function sleep(ms) {
           let comb = this.getCombById(bestCombinations[i]);
           if (combRelativeCalc(comb, this.dice) != 0 && this.scores[player][comb.id] === undefined) {
             console.log("AI found the best comb: ", comb.name);
+
+            await sleep(this.aispeed);
             this.setScore(player, comb.id);
             this.isAITurn = false;
             return;
@@ -425,7 +436,7 @@ function sleep(ms) {
 
         this.winner();
 
-        if (this.playerTurn === 1 && this.isVsAI) {
+        if (this.isVsAI && this.playerTurn == 1 || this.AIvsAI) {
           this.isAITurn = true;
           this.AITurn();
         }
@@ -452,6 +463,7 @@ function sleep(ms) {
       return ans;
     },
     reset: function () {
+      this.AIvsAI = false;
       this.willRoll = false;
       this.playerTurn = 0;
       this.rollsLeft = 3;
@@ -479,6 +491,14 @@ function sleep(ms) {
         }
       }
       return true;
+    },
+    startAIvsAI() {
+      if (this.askForReset()) {
+        this.playersCount = 2;
+        this.AIvsAI = true;
+        this.isVsAI = true;
+        this.AITurn();
+      }
     },
     incPlayersCount() {
       if (this.askForReset()) {
@@ -635,7 +655,7 @@ var Component = normalizeComponent(
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__ = __webpack_require__(3);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_5bbbc079_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_27eee27c_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(18);
 var normalizeComponent = __webpack_require__(1)
 /* script */
 
@@ -652,7 +672,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_5bbbc079_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_27eee27c_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -724,7 +744,7 @@ const combinations = [{
   group: 0,
   id: 1,
   name: 'ones',
-  maxValue: 3,
+  maxValue: 4,
   calc: function (dice) {
     return sumOfType(dice, 1);
   }
@@ -732,7 +752,7 @@ const combinations = [{
   group: 0,
   id: 2,
   name: 'twos',
-  maxValue: 5,
+  maxValue: 8,
   calc: function (dice) {
     return sumOfType(dice, 2);
   }
@@ -740,7 +760,7 @@ const combinations = [{
   group: 0,
   id: 3,
   name: 'threes',
-  maxValue: 7,
+  maxValue: 12,
   calc: function (dice) {
     return sumOfType(dice, 3);
   }
@@ -748,7 +768,7 @@ const combinations = [{
   group: 0,
   id: 4,
   name: 'fours',
-  maxValue: 10,
+  maxValue: 15,
   calc: function (dice) {
     return sumOfType(dice, 4);
   }
@@ -756,7 +776,7 @@ const combinations = [{
   group: 0,
   id: 5,
   name: 'fives',
-  maxValue: 15,
+  maxValue: 20,
   calc: function (dice) {
     return sumOfType(dice, 5);
   }
@@ -764,7 +784,7 @@ const combinations = [{
   group: 0,
   id: 6,
   name: 'sixes',
-  maxValue: 20,
+  maxValue: 24,
   calc: function (dice) {
     return sumOfType(dice, 6);
   }
@@ -785,7 +805,7 @@ const combinations = [{
   group: 1,
   id: 8,
   name: 'x4',
-  maxValue: 24,
+  maxValue: 20,
   calc: function (dice) {
     let arr = Object.values(getMap(dice));
     if (Math.max(...arr) >= 4) {
@@ -798,7 +818,7 @@ const combinations = [{
   group: 1,
   id: 9,
   name: 'full house',
-  maxValue: 25,
+  maxValue: 15,
   calc: function (dice) {
     let arr = Object.values(getMap(dice)).filter(Number);
 
@@ -812,7 +832,7 @@ const combinations = [{
   group: 1,
   id: 10,
   name: 'small straight',
-  maxValue: 30,
+  maxValue: 25,
   calc: function (dice) {
     let possibleCombs = [{ 1: 1, 2: 1, 3: 1, 4: 1 }, { 5: 1, 2: 1, 3: 1, 4: 1 }, { 6: 1, 5: 1, 3: 1, 4: 1 }];
     let map = getMap(dice);
@@ -834,7 +854,7 @@ const combinations = [{
   group: 1,
   id: 11,
   name: 'large straight',
-  maxValue: 40,
+  maxValue: 30,
   calc: function (dice) {
     let possibleCombs = [{ 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 }, { 5: 1, 2: 1, 3: 1, 4: 1, 6: 1 }];
     let map = getMap(dice);
@@ -856,7 +876,7 @@ const combinations = [{
   group: 1,
   id: 12,
   name: 'yahtzee',
-  maxValue: 50,
+  maxValue: 30,
   calc: function (dice) {
     let arr = Object.values(getMap(dice));
     if (Math.max(...arr) >= 5) {
@@ -1076,7 +1096,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
                   },on:{"click":function($event){return _vm.setScoreUser(playerID, comb.id)}}},[_vm._v("\n                  "+_vm._s(_vm.calcCell(playerID, comb))+"\n                  "+_vm._s(_vm.scores[playerID][comb.id])+" \n              ")])})]})],2)}),_vm._v(" "),_c('tr',[_c('td',[_vm._v("bonus")]),_vm._v(" "),_vm._l(((_vm.playersCount)),function(_,playerID){return _c('td',{staticClass:"bonuscell",class:{ setscore: _vm.partSum(_vm.scores[playerID]) >= _vm.bonusRequire }},[_vm._v(_vm._s(_vm.partSum(_vm.scores[playerID]))+"/"+_vm._s(_vm.bonusRequire))])}),_vm._v(" "),_c('td',[_vm._v(_vm._s(_vm.combinations[12].name))]),_vm._v(" "),_vm._l((_vm.playersCount),function(_,playerID){return _c('td',{key:playerID+'_'+_vm.combinations[12].id,class:{ 
                   setscore: _vm.scores[playerID][_vm.combinations[12].id] !== undefined, 
                   scorecell: (_vm.rolled && _vm.playerTurn === playerID && _vm.scores[playerID][_vm.combinations[12].id] === undefined ? true : false) 
-                },on:{"click":function($event){return _vm.setScoreUser(playerID, _vm.combinations[12].id)}}},[_vm._v("\n                "+_vm._s(_vm.calcCell(playerID, _vm.combinations[12]))+"\n                "+_vm._s(_vm.scores[playerID][_vm.combinations[12].id])+" \n            ")])})],2),_vm._v(" "),_c('tr',[_vm._l((_vm.playersCount-2),function(playerID){return _c('td')}),_vm._v(" "),_c('td'),_c('td'),_c('td'),_vm._v(" "),_c('td',[_vm._v("total")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n              "+_vm._s(_vm.finalSum(_vm.scores[playerID-1]))+"\n            ")])})],2)],2)])]),_vm._v(" "),_c('div',{staticClass:"dice block"},[_vm._v("\n      dice\n      "),_c('Dice',{attrs:{"dice":_vm.dice,"willRoll":_vm.willRoll,"disabled":_vm.isAITurn}})],1),_vm._v(" "),_c('div',{staticClass:"buttons block"},[_c('div',{staticClass:"settings-icon",class:{ on: _vm.showSettings },on:{"click":_vm.settings}}),_vm._v(" "),_c('button',{staticClass:"button",class:{ unclickable: (_vm.rollsLeft === 0) || _vm.isAITurn, red: (_vm.rollsLeft === 0), blue: (_vm.rollsLeft > 0) },attrs:{"type":"button","id":"roll-dice"},on:{"mousedown":_vm.adsRoll}},[_vm._v("\n        "+_vm._s(_vm.rollButtonMessage)+"\n      ")])]),_vm._v(" "),_c('div',{staticClass:"settings block",class:{'hidden': !_vm.showSettings}},[_c('div',[_vm._v("\n        reset game "),_c('button',{staticClass:"danger",on:{"click":_vm.confirmReset}},[_vm._v("RESET")])]),_vm._v(" "),_c('div',[_vm._v("\n        adjustments "),_c('button',{class:{success: _vm.adjustments, info: !_vm.adjustments},on:{"click":function($event){_vm.askForReset() ? _vm.adjustments = !_vm.adjustments : null}}},[_vm._v(_vm._s(_vm.adjustments ? 'ON' : 'OFF'))])]),_vm._v(" "),_c('div',[_vm._v("\n        players count "),_c('button',{staticClass:"info",on:{"click":_vm.incPlayersCount}},[_vm._v(_vm._s(_vm.isVsAI ? 'AI' : _vm.playersCount))])]),_vm._v(" "),_c('div',[_vm._v("\n        about "),_c('button',{staticClass:"info",on:{"click":function($event){return _vm.toggleModal('about')}}},[_vm._v("about")])])])]),_c('v-dialog')],1)}
+                },on:{"click":function($event){return _vm.setScoreUser(playerID, _vm.combinations[12].id)}}},[_vm._v("\n                "+_vm._s(_vm.calcCell(playerID, _vm.combinations[12]))+"\n                "+_vm._s(_vm.scores[playerID][_vm.combinations[12].id])+" \n            ")])})],2),_vm._v(" "),_c('tr',[_vm._l((_vm.playersCount-2),function(playerID){return _c('td')}),_vm._v(" "),_c('td'),_c('td'),_c('td'),_vm._v(" "),_c('td',[_vm._v("total")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n              "+_vm._s(_vm.finalSum(_vm.scores[playerID-1]))+"\n            ")])})],2)],2)])]),_vm._v(" "),_c('div',{staticClass:"dice block"},[_vm._v("\n      dice\n      "),_c('Dice',{attrs:{"dice":_vm.dice,"willRoll":_vm.willRoll,"disabled":_vm.isAITurn}})],1),_vm._v(" "),_c('div',{staticClass:"buttons block"},[_c('div',{staticClass:"settings-icon",class:{ on: _vm.showSettings },on:{"click":_vm.settings}}),_vm._v(" "),_c('button',{staticClass:"button",class:{ unclickable: (_vm.rollsLeft === 0) || _vm.isAITurn, red: (_vm.rollsLeft === 0), blue: (_vm.rollsLeft > 0) },attrs:{"type":"button","id":"roll-dice"},on:{"mousedown":_vm.adsRoll}},[_vm._v("\n        "+_vm._s(_vm.rollButtonMessage)+"\n      ")])]),_vm._v(" "),_c('div',{staticClass:"settings block",class:{'hidden': !_vm.showSettings}},[_c('div',[_vm._v("\n        reset game "),_c('button',{staticClass:"danger",on:{"click":_vm.confirmReset}},[_vm._v("RESET")])]),_vm._v(" "),_c('div',[_vm._v("\n        adjustments "),_c('button',{class:{success: _vm.adjustments, info: !_vm.adjustments},on:{"click":function($event){_vm.askForReset() ? _vm.adjustments = !_vm.adjustments : null}}},[_vm._v(_vm._s(_vm.adjustments ? 'ON' : 'OFF'))])]),_vm._v(" "),_c('div',[_vm._v("\n        players count "),_c('button',{staticClass:"info",on:{"click":_vm.incPlayersCount}},[_vm._v(_vm._s(_vm.isVsAI ? 'AI' : _vm.playersCount))])]),_vm._v(" "),_c('div',[_vm._v("\n        AIvsAI "),_c('button',{staticClass:"info",on:{"click":_vm.startAIvsAI}},[_vm._v("fight")])]),_vm._v(" "),_c('div',[_vm._v("\n        about "),_c('button',{staticClass:"info",on:{"click":function($event){return _vm.toggleModal('about')}}},[_vm._v("about")])])])]),_c('v-dialog')],1)}
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
@@ -1093,4 +1113,4 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 
 /***/ })
 ],[5]);
-//# sourceMappingURL=app.94e58d1220421f209464.js.map
+//# sourceMappingURL=app.ed626d8ca2e38ff03f9f.js.map
