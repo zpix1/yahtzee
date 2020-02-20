@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <h1 class="header">Yahtzee <a @click="toggleModal('about')">Info</a></h1>
+    <h1 class="header">yahtzee <a @click="toggleModal('about')">info</a></h1>
   <!-- <v-dialog/> -->
     <div class="wrapper card">
       <div class="scores block">
@@ -36,7 +36,7 @@
                       setscore: scores[playerID][comb.id] !== undefined, 
                       scorecell: (rolled && playerTurn === playerID && scores[playerID][comb.id] === undefined ? true : false) 
                     }" 
-                    v-on:click="setScore(playerID, comb.id)">
+                    v-on:click="setScoreUser(playerID, comb.id)">
                     {{ calcCell(playerID, comb) }}
                     {{ scores[playerID][comb.id] }} 
                 </td>
@@ -53,7 +53,7 @@
                     setscore: scores[playerID][combinations[12].id] !== undefined, 
                     scorecell: (rolled && playerTurn === playerID && scores[playerID][combinations[12].id] === undefined ? true : false) 
                   }" 
-                  v-on:click="setScore(playerID, combinations[12].id)">
+                  v-on:click="setScoreUser(playerID, combinations[12].id)">
                   {{ calcCell(playerID, combinations[12]) }}
                   {{ scores[playerID][combinations[12].id] }} 
               </td>
@@ -363,6 +363,11 @@ export default {
       this.setScore(player, maxC.id)
 
       this.isAITurn = false;
+    },
+    setScoreUser: async function (player, combId) {
+      if (!this.isAITurn) {
+        this.setScore(player, combId)
+      }
     },
     setScore: async function (player, combId) {
       if ((this.rolled) && (player === this.playerTurn) && (!this.scores[player].hasOwnProperty(combId))) {
