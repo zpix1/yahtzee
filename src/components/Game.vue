@@ -141,6 +141,7 @@ export default {
   },
   data () {
     return {
+      aispeed: 500,
       willRoll: false,
       bonusRequire: 63,
       bonusSize: 35,
@@ -244,7 +245,7 @@ export default {
         for (j = 0; j < combs.length; j++) {
           var comb = combs[j]
           for (i = 0; i < allDices.length; i++) {
-            if (comb.calc(allDices[i]) > ans.val) {
+            if (comb.calc(allDices[i]) >= ans.val) {
               ans.dice = allDices[i]
               ans.val = comb.calc(allDices[i])
               ans.comb = comb
@@ -292,7 +293,7 @@ export default {
       const bestCombinations = [12, 10, 11, 9];
       for (let rollID = 0; rollID < 3; rollID++) {
         this.roll(this.adjustments);
-        await sleep(1000);
+        await sleep(this.aispeed);
         // Check for the evidently best combinations
         for (let i = 0; i < bestCombinations.length; i++) {
           let comb = this.getCombById(bestCombinations[i])
@@ -341,21 +342,24 @@ export default {
         }
         if (rollID != 2) {
           for (let i = 0; i < 5; i++) {
-            this.dice[i].used = false
+            // console.log(maxAction)
+            if (!maxAction.includes(i + 1))
+              this.dice[i].used = false
           }
           for (let i = 0; i < maxAction.length; i++) {
-            await sleep(1000);
-            this.dice[maxAction[i]-1].used = true
+            await sleep(this.aispeed / 2);
+            if (!this.dice[maxAction[i]-1].used)
+              this.dice[maxAction[i]-1].used = true
           }
         }
-        await sleep(1000);
+        await sleep(this.aispeed);
       }
 
       let maxS = 0
       let maxC = null
       for (let i = 0; i < this.combinations.length; i++) {
         let comb = this.combinations[i]
-        if (combRelativeCalc(comb, this.dice) > maxS && this.scores[player][comb.id] === undefined) {
+        if (combRelativeCalc(comb, this.dice) >= maxS && this.scores[player][comb.id] === undefined) {
           maxS = combRelativeCalc(comb, this.dice)
           maxC = comb
         }
@@ -418,7 +422,7 @@ export default {
       this.resetted = true
       this.isAITurn = false
       this.rolled = false
-      this.rollButtonMessage = 'Player 1 turn'
+      this.rollButtonMessage = 'P1 turn'
       this.dice = defaultDice()
       this.scores = defaultScores()
     },
