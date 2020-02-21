@@ -200,7 +200,8 @@ function sleep(ms) {
       isVsAI: false,
       isAITurn: false,
       infoModal: false,
-      AIvsAI: false
+      AIvsAI: false,
+      history: []
     };
   },
   mounted: function () {
@@ -210,11 +211,11 @@ function sleep(ms) {
     // this.isAITurn = true;
     // this.AITurn();
   },
-  persist: ['AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
+  persist: ['history', 'AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
     toggleModal: function (x) {
       let textHTML = x == 'about' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["a" /* AboutPage */])() : x == 'rules' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["b" /* RulesPage */])() : x == 'scores' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["c" /* ScoringPage */])() : '';
-      textHTML = `<div>${textHTML}</div>`;
+      textHTML = `<div>${textHTML}<br>you played ${this.history.length} games<br>you won ${this.history.filter(x => x.winner === 'P1').length} times</div>`;
       this.$modal.show('dialog', {
         text: textHTML,
         title: x
@@ -505,6 +506,9 @@ function sleep(ms) {
         if (this.playersCount == this.maxPlayersCount) {
           this.playersCount = 2;
           this.isVsAI = true;
+        } else if (this.playersCount === 2 && this.isVsAI) {
+          this.playersCount = 2;
+          this.isVsAI = false;
         } else {
           this.playersCount += 1;
           this.isVsAI = false;
@@ -531,6 +535,7 @@ function sleep(ms) {
             maxPlayer = i;
           }
         }
+        this.history.push({ date: new Date(), winner: this.playerName(maxPlayer + 1), winscore: maxScore });
         alert(`${this.playerName(maxPlayer + 1)} won with a score of ${maxScore}!`);
         this.reset();
       }
@@ -655,7 +660,7 @@ var Component = normalizeComponent(
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__ = __webpack_require__(3);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_27eee27c_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_57573f61_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(18);
 var normalizeComponent = __webpack_require__(1)
 /* script */
 
@@ -672,7 +677,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_27eee27c_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_57573f61_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -744,7 +749,7 @@ const combinations = [{
   group: 0,
   id: 1,
   name: 'ones',
-  maxValue: 4,
+  maxValue: 3,
   calc: function (dice) {
     return sumOfType(dice, 1);
   }
@@ -752,7 +757,7 @@ const combinations = [{
   group: 0,
   id: 2,
   name: 'twos',
-  maxValue: 8,
+  maxValue: 6,
   calc: function (dice) {
     return sumOfType(dice, 2);
   }
@@ -760,7 +765,7 @@ const combinations = [{
   group: 0,
   id: 3,
   name: 'threes',
-  maxValue: 12,
+  maxValue: 9,
   calc: function (dice) {
     return sumOfType(dice, 3);
   }
@@ -768,7 +773,7 @@ const combinations = [{
   group: 0,
   id: 4,
   name: 'fours',
-  maxValue: 15,
+  maxValue: 12,
   calc: function (dice) {
     return sumOfType(dice, 4);
   }
@@ -776,7 +781,7 @@ const combinations = [{
   group: 0,
   id: 5,
   name: 'fives',
-  maxValue: 20,
+  maxValue: 15,
   calc: function (dice) {
     return sumOfType(dice, 5);
   }
@@ -784,7 +789,7 @@ const combinations = [{
   group: 0,
   id: 6,
   name: 'sixes',
-  maxValue: 24,
+  maxValue: 20,
   calc: function (dice) {
     return sumOfType(dice, 6);
   }
@@ -1113,4 +1118,4 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 
 /***/ })
 ],[5]);
-//# sourceMappingURL=app.ed626d8ca2e38ff03f9f.js.map
+//# sourceMappingURL=app.6aeab37bdb6d1eadad59.js.map

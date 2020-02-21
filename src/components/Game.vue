@@ -163,7 +163,8 @@ export default {
       isVsAI: false,
       isAITurn: false,
       infoModal: false,
-      AIvsAI: false
+      AIvsAI: false,
+      history: []
     }
   },
   mounted: function () {
@@ -173,11 +174,11 @@ export default {
     // this.isAITurn = true;
     // this.AITurn();
   },
-  persist: ['AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
+  persist: ['history', 'AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
     toggleModal: function(x) {
       let textHTML = x == 'about' ? AboutPage() : x == 'rules' ? RulesPage() : x == 'scores' ? ScoringPage() : ''
-      textHTML = `<div>${textHTML}</div>`
+      textHTML = `<div>${textHTML}<br>you played ${this.history.length} games<br>you won ${this.history.filter(x => x.winner === 'P1').length} times</div>`
       this.$modal.show('dialog',{
         text: textHTML,
         title: x
@@ -469,6 +470,9 @@ export default {
         if (this.playersCount == this.maxPlayersCount) {
           this.playersCount = 2
           this.isVsAI = true
+        } else if (this.playersCount === 2 && this.isVsAI) {
+          this.playersCount = 2
+          this.isVsAI = false
         } else {
           this.playersCount += 1
           this.isVsAI = false
@@ -495,6 +499,7 @@ export default {
             maxPlayer = i
           }
         }
+        this.history.push({date: new Date(), winner: this.playerName(maxPlayer + 1), winscore: maxScore})
         alert(`${this.playerName(maxPlayer + 1)} won with a score of ${maxScore}!`)
         this.reset()
       }
