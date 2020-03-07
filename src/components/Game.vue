@@ -239,7 +239,7 @@ export default {
       setTimeout(() => { this.willRoll = false }, 500)
 
       if (activate) {
-        var combs = this.combinations.filter((c) => this.scores[this.playerTurn][c.id] === undefined && c.id !== 13) // No chance pls
+        var combs = this.combinations.filter((c) => this.scores[this.playerTurn][c.id] === undefined) // No chance pls
         var newDices = Array(this.dice.length)
         var allDices = []
 
