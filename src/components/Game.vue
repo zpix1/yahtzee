@@ -306,7 +306,7 @@ export default {
         let maxC = null
         for (let i = 0; i < this.combinations.length; i++) {
           let comb = this.combinations[i]
-          if (combRelativeCalc(comb, dice) > maxS && this.scores[player][comb.id] === undefined) {
+          if (combRelativeCalc(comb, dice) >= maxS && this.scores[player][comb.id] === undefined) {
             maxS = combRelativeCalc(comb, dice)
             maxC = comb
           }
