@@ -225,7 +225,15 @@ function sleep(ms) {
     },
     toggleModal: function (x) {
       let textHTML = x == 'about' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["a" /* AboutPage */])() : x == 'rules' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["b" /* RulesPage */])() : x == 'scores' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["c" /* ScoringPage */])() : '';
-      textHTML = `<div>${textHTML}<br>you played ${this.history.length} games<br>you won ${this.history.filter(x => x.winner === 'P1').length} times</div>`;
+      textHTML = `<div>${textHTML}<br>you played ${this.history.length} games<br>you won ${this.history.filter(x => x.winner === 'P1').length} times<br>last five games:<br>`;
+      const maxEntries = 5;
+      let sliced = this.history.slice(Math.max(this.history.length - maxEntries, 0));
+      for (let i = sliced.length - 1; i >= 0; i--) {
+        let current_datetime = new Date(sliced[i].date);
+        let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getDate() + " " + current_datetime.getHours() + ":" + current_datetime.getMinutes() + ":" + current_datetime.getSeconds();
+        textHTML += `d:${formatted_date} winner: ${sliced[i].winner}, scores: ${(sliced[i].scores || [sliced[i].winscore]).join(', ')}<br>`;
+      }
+      textHTML += '</div>';
       this.$modal.show('dialog', {
         text: textHTML,
         title: x
@@ -333,7 +341,7 @@ function sleep(ms) {
       const maxCombScore = dice => {
         let maxS = 0;
         let maxC = null;
-        for (let i = 0; i < this.combinations.length - 1; i++) {
+        for (let i = 0; i < this.combinations.length; i++) {
           let comb = this.combinations[i];
           if (combRelativeCalc(comb, dice) > maxS && this.scores[player][comb.id] === undefined) {
             maxS = combRelativeCalc(comb, dice);
@@ -541,7 +549,7 @@ function sleep(ms) {
             maxPlayer = i;
           }
         }
-        this.history.push({ date: new Date(), winner: this.playerName(maxPlayer + 1), winscore: maxScore });
+        this.history.push({ date: new Date(), winner: this.playerName(maxPlayer + 1), scores: sums.slice(0, this.playersCount) });
         alert(`${this.playerName(maxPlayer + 1)} won with a score of ${maxScore}!`);
         this.reset();
       }
@@ -666,7 +674,7 @@ var Component = normalizeComponent(
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__ = __webpack_require__(3);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_334bf73f_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_54644d65_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(18);
 var normalizeComponent = __webpack_require__(1)
 /* script */
 
@@ -683,7 +691,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_334bf73f_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_54644d65_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -1124,4 +1132,4 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 
 /***/ })
 ],[5]);
-//# sourceMappingURL=app.dbd52f5993cb3d5aec43.js.map
+//# sourceMappingURL=app.e24dbb11d44e9a937795.js.map
