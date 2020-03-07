@@ -141,6 +141,10 @@ webpackJsonp([1],[
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -201,10 +205,12 @@ function sleep(ms) {
       isAITurn: false,
       infoModal: false,
       AIvsAI: false,
+      pyroEnabled: false,
       history: []
     };
   },
   mounted: function () {
+    // this.enablePyro();
     // this.reset();
     // this.playerTurn = 1;
     // this.isAITurn = true;
@@ -213,6 +219,10 @@ function sleep(ms) {
   },
   persist: ['history', 'AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
+    enablePyro: function () {
+      this.pyroEnabled = true;
+      setTimeout(x => this.pyroEnabled = false, 3000);
+    },
     toggleModal: function (x) {
       let textHTML = x == 'about' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["a" /* AboutPage */])() : x == 'rules' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["b" /* RulesPage */])() : x == 'scores' ? Object(__WEBPACK_IMPORTED_MODULE_1__utility__["c" /* ScoringPage */])() : '';
       textHTML = `<div>${textHTML}<br>you played ${this.history.length} games<br>you won ${this.history.filter(x => x.winner === 'P1').length} times</div>`;
@@ -220,13 +230,6 @@ function sleep(ms) {
         text: textHTML,
         title: x
       });
-      //     this.$modal.show({
-      //       title: x,
-      //       text: 
-      //       ,scrollable: true,height: 'auto'
-      //     }, {
-      // height: 'auto',scrollable: true,
-      // })
     },
     playerName: function (playerID) {
       if (this.AIvsAI) {
@@ -312,6 +315,9 @@ function sleep(ms) {
             d.type = Object(__WEBPACK_IMPORTED_MODULE_1__utility__["d" /* getRandomInt */])(1, 6);
           }
         }
+      }
+      if (this.getCombById(12).calc(this.dice) > 0) {
+        this.enablePyro();
       }
       const throwsLeft = --this.rollsLeft;
       this.rollButtonMessage = (throwsLeft === 1 ? '1 roll left' : `${throwsLeft} rolls left`) + ` ${this.isAITurn ? "(AI)" : ""}`;
@@ -660,7 +666,7 @@ var Component = normalizeComponent(
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__ = __webpack_require__(3);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_57573f61_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_334bf73f_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(18);
 var normalizeComponent = __webpack_require__(1)
 /* script */
 
@@ -677,7 +683,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_57573f61_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_334bf73f_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -1095,13 +1101,13 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"main"},[_c('h1',{staticClass:"header"},[_vm._v("yahtzee "),_c('a',{on:{"click":function($event){_vm.toggleModal('about')}}},[_vm._v("info")])]),_vm._v(" "),_c('div',{staticClass:"wrapper card"},[_c('div',{staticClass:"scores block"},[_c('table',{staticClass:"scores-table"},[_c('colgroup',[_c('col',{staticStyle:{"width":"20%"}}),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('col',{style:({width: 30/_vm.playersCount + '%'})})}),_vm._v(" "),_c('col',{staticStyle:{"width":"20%"}}),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('col',{style:({width: 30/_vm.playersCount + '%'})})})],2),_vm._v(" "),_c('thead',[_c('tr',[_c('th',[_vm._v("co")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('th',[_vm._v("\n              "+_vm._s(_vm.playerName(playerID))+"\n            ")])}),_vm._v(" "),_c('th',[_vm._v("co")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('th',[_vm._v("\n              "+_vm._s(_vm.playerName(playerID))+"\n            ")])})],2)]),_vm._v(" "),_c('tbody',[_vm._l((_vm.combinations.slice(0, 12).map(function (e, i, a) { return i < a.length/2  ? [e, a[i + a.length / 2]] : ''; }).slice(0,_vm.combinations.length/2)),function(doubleComb){return _c('tr',{key:doubleComb[0].id},[_vm._l((doubleComb),function(comb){return [_c('td',[_vm._v(_vm._s(comb.name))]),_vm._v(" "),_vm._l(((_vm.playersCount)),function(_,playerID){return _c('td',{key:playerID+'_'+comb.id,class:{ 
-                    setscore: _vm.scores[playerID][comb.id] !== undefined, 
-                    scorecell: (_vm.rolled && _vm.playerTurn === playerID && _vm.scores[playerID][comb.id] === undefined ? true : false) 
-                  },on:{"click":function($event){_vm.setScoreUser(playerID, comb.id)}}},[_vm._v("\n                  "+_vm._s(_vm.calcCell(playerID, comb))+"\n                  "+_vm._s(_vm.scores[playerID][comb.id])+" \n              ")])})]})],2)}),_vm._v(" "),_c('tr',[_c('td',[_vm._v("bonus")]),_vm._v(" "),_vm._l(((_vm.playersCount)),function(_,playerID){return _c('td',{staticClass:"bonuscell",class:{ setscore: _vm.partSum(_vm.scores[playerID]) >= _vm.bonusRequire }},[_vm._v(_vm._s(_vm.partSum(_vm.scores[playerID]))+"/"+_vm._s(_vm.bonusRequire))])}),_vm._v(" "),_c('td',[_vm._v(_vm._s(_vm.combinations[12].name))]),_vm._v(" "),_vm._l((_vm.playersCount),function(_,playerID){return _c('td',{key:playerID+'_'+_vm.combinations[12].id,class:{ 
-                  setscore: _vm.scores[playerID][_vm.combinations[12].id] !== undefined, 
-                  scorecell: (_vm.rolled && _vm.playerTurn === playerID && _vm.scores[playerID][_vm.combinations[12].id] === undefined ? true : false) 
-                },on:{"click":function($event){_vm.setScoreUser(playerID, _vm.combinations[12].id)}}},[_vm._v("\n                "+_vm._s(_vm.calcCell(playerID, _vm.combinations[12]))+"\n                "+_vm._s(_vm.scores[playerID][_vm.combinations[12].id])+" \n            ")])})],2),_vm._v(" "),_c('tr',[_vm._l((_vm.playersCount-2),function(playerID){return _c('td')}),_vm._v(" "),_c('td'),_c('td'),_c('td'),_vm._v(" "),_c('td',[_vm._v("total")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n              "+_vm._s(_vm.finalSum(_vm.scores[playerID-1]))+"\n            ")])})],2)],2)])]),_vm._v(" "),_c('div',{staticClass:"dice block"},[_vm._v("\n      dice\n      "),_c('Dice',{attrs:{"dice":_vm.dice,"willRoll":_vm.willRoll,"disabled":_vm.isAITurn}})],1),_vm._v(" "),_c('div',{staticClass:"buttons block"},[_c('div',{staticClass:"settings-icon",class:{ on: _vm.showSettings },on:{"click":_vm.settings}}),_vm._v(" "),_c('button',{staticClass:"button",class:{ unclickable: (_vm.rollsLeft === 0) || _vm.isAITurn, red: (_vm.rollsLeft === 0), blue: (_vm.rollsLeft > 0) },attrs:{"type":"button","id":"roll-dice"},on:{"mousedown":_vm.adsRoll}},[_vm._v("\n        "+_vm._s(_vm.rollButtonMessage)+"\n      ")])]),_vm._v(" "),_c('div',{staticClass:"settings block",class:{'hidden': !_vm.showSettings}},[_c('div',[_vm._v("\n        reset game "),_c('button',{staticClass:"danger",on:{"click":_vm.confirmReset}},[_vm._v("RESET")])]),_vm._v(" "),_c('div',[_vm._v("\n        adjustments "),_c('button',{class:{success: _vm.adjustments, info: !_vm.adjustments},on:{"click":function($event){_vm.askForReset() ? _vm.adjustments = !_vm.adjustments : null}}},[_vm._v(_vm._s(_vm.adjustments ? 'ON' : 'OFF'))])]),_vm._v(" "),_c('div',[_vm._v("\n        players count "),_c('button',{staticClass:"info",on:{"click":_vm.incPlayersCount}},[_vm._v(_vm._s(_vm.isVsAI ? 'AI' : _vm.playersCount))])]),_vm._v(" "),_c('div',[_vm._v("\n        AIvsAI "),_c('button',{staticClass:"info",on:{"click":_vm.startAIvsAI}},[_vm._v("fight")])]),_vm._v(" "),_c('div',[_vm._v("\n        about "),_c('button',{staticClass:"info",on:{"click":function($event){_vm.toggleModal('about')}}},[_vm._v("about")])])])]),_c('v-dialog')],1)}
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"main"},[(_vm.pyroEnabled)?_c('div',{staticClass:"pyro"},[_c('div',{staticClass:"before"}),_vm._v(" "),_c('div',{staticClass:"after"})]):_vm._e(),_vm._v(" "),_c('h1',{staticClass:"header"},[_vm._v("yahtzee "),_c('a',{on:{"click":function($event){_vm.toggleModal('about')}}},[_vm._v("info")])]),_vm._v(" "),_c('div',{staticClass:"wrapper card"},[_c('div',{staticClass:"scores block"},[_c('table',{staticClass:"scores-table"},[_c('colgroup',[_c('col',{staticStyle:{"width":"20%"}}),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('col',{style:({width: 30/_vm.playersCount + '%'})})}),_vm._v(" "),_c('col',{staticStyle:{"width":"20%"}}),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('col',{style:({width: 30/_vm.playersCount + '%'})})})],2),_vm._v(" "),_c('thead',[_c('tr',[_c('th',[_vm._v("co")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('th',[_vm._v("\n                "+_vm._s(_vm.playerName(playerID))+"\n              ")])}),_vm._v(" "),_c('th',[_vm._v("co")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('th',[_vm._v("\n                "+_vm._s(_vm.playerName(playerID))+"\n              ")])})],2)]),_vm._v(" "),_c('tbody',[_vm._l((_vm.combinations.slice(0, 12).map(function (e, i, a) { return i < a.length/2  ? [e, a[i + a.length / 2]] : ''; }).slice(0,_vm.combinations.length/2)),function(doubleComb){return _c('tr',{key:doubleComb[0].id},[_vm._l((doubleComb),function(comb){return [_c('td',[_vm._v(_vm._s(comb.name))]),_vm._v(" "),_vm._l(((_vm.playersCount)),function(_,playerID){return _c('td',{key:playerID+'_'+comb.id,class:{ 
+                      setscore: _vm.scores[playerID][comb.id] !== undefined, 
+                      scorecell: (_vm.rolled && _vm.playerTurn === playerID && _vm.scores[playerID][comb.id] === undefined ? true : false) 
+                    },on:{"click":function($event){_vm.setScoreUser(playerID, comb.id)}}},[_vm._v("\n                    "+_vm._s(_vm.calcCell(playerID, comb))+"\n                    "+_vm._s(_vm.scores[playerID][comb.id])+" \n                ")])})]})],2)}),_vm._v(" "),_c('tr',[_c('td',[_vm._v("bonus")]),_vm._v(" "),_vm._l(((_vm.playersCount)),function(_,playerID){return _c('td',{staticClass:"bonuscell",class:{ setscore: _vm.partSum(_vm.scores[playerID]) >= _vm.bonusRequire }},[_vm._v(_vm._s(_vm.partSum(_vm.scores[playerID]))+"/"+_vm._s(_vm.bonusRequire))])}),_vm._v(" "),_c('td',[_vm._v(_vm._s(_vm.combinations[12].name))]),_vm._v(" "),_vm._l((_vm.playersCount),function(_,playerID){return _c('td',{key:playerID+'_'+_vm.combinations[12].id,class:{ 
+                    setscore: _vm.scores[playerID][_vm.combinations[12].id] !== undefined, 
+                    scorecell: (_vm.rolled && _vm.playerTurn === playerID && _vm.scores[playerID][_vm.combinations[12].id] === undefined ? true : false) 
+                  },on:{"click":function($event){_vm.setScoreUser(playerID, _vm.combinations[12].id)}}},[_vm._v("\n                  "+_vm._s(_vm.calcCell(playerID, _vm.combinations[12]))+"\n                  "+_vm._s(_vm.scores[playerID][_vm.combinations[12].id])+" \n              ")])})],2),_vm._v(" "),_c('tr',[_vm._l((_vm.playersCount-2),function(playerID){return _c('td')}),_vm._v(" "),_c('td'),_c('td'),_c('td'),_vm._v(" "),_c('td',[_vm._v("total")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n                "+_vm._s(_vm.finalSum(_vm.scores[playerID-1]))+"\n              ")])})],2)],2)])]),_vm._v(" "),_c('div',{staticClass:"dice block"},[_vm._v("\n        dice\n        "),_c('Dice',{attrs:{"dice":_vm.dice,"willRoll":_vm.willRoll,"disabled":_vm.isAITurn}})],1),_vm._v(" "),_c('div',{staticClass:"buttons block"},[_c('div',{staticClass:"settings-icon",class:{ on: _vm.showSettings },on:{"click":_vm.settings}}),_vm._v(" "),_c('button',{staticClass:"button",class:{ unclickable: (_vm.rollsLeft === 0) || _vm.isAITurn, red: (_vm.rollsLeft === 0), blue: (_vm.rollsLeft > 0) },attrs:{"type":"button","id":"roll-dice"},on:{"mousedown":_vm.adsRoll}},[_vm._v("\n          "+_vm._s(_vm.rollButtonMessage)+"\n        ")])]),_vm._v(" "),_c('div',{staticClass:"settings block",class:{'hidden': !_vm.showSettings}},[_c('div',[_vm._v("\n          reset game "),_c('button',{staticClass:"danger",on:{"click":_vm.confirmReset}},[_vm._v("RESET")])]),_vm._v(" "),_c('div',[_vm._v("\n          adjustments "),_c('button',{class:{success: _vm.adjustments, info: !_vm.adjustments},on:{"click":function($event){_vm.askForReset() ? _vm.adjustments = !_vm.adjustments : null}}},[_vm._v(_vm._s(_vm.adjustments ? 'ON' : 'OFF'))])]),_vm._v(" "),_c('div',[_vm._v("\n          players count "),_c('button',{staticClass:"info",on:{"click":_vm.incPlayersCount}},[_vm._v(_vm._s(_vm.isVsAI ? 'AI' : _vm.playersCount))])]),_vm._v(" "),_c('div',[_vm._v("\n          AIvsAI "),_c('button',{staticClass:"info",on:{"click":_vm.startAIvsAI}},[_vm._v("fight")])]),_vm._v(" "),_c('div',[_vm._v("\n          about "),_c('button',{staticClass:"info",on:{"click":function($event){_vm.toggleModal('about')}}},[_vm._v("about")])])])]),_c('v-dialog')],1)}
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
@@ -1118,4 +1124,4 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 
 /***/ })
 ],[5]);
-//# sourceMappingURL=app.5f2ade5222c0e915e33f.js.map
+//# sourceMappingURL=app.dbd52f5993cb3d5aec43.js.map

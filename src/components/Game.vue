@@ -1,5 +1,9 @@
 <template>
   <div class="main">
+    <div class="pyro" v-if="pyroEnabled">
+  <div class="before"></div>
+  <div class="after"></div>
+</div>
     <h1 class="header">yahtzee <a @click="toggleModal('about')">info</a></h1>
   <!-- <v-dialog/> -->
     <div class="wrapper card">
@@ -164,10 +168,12 @@ export default {
       isAITurn: false,
       infoModal: false,
       AIvsAI: false,
+      pyroEnabled: false,
       history: []
     }
   },
   mounted: function () {
+    // this.enablePyro();
     // this.reset();
     // this.playerTurn = 1;
     // this.isAITurn = true;
@@ -176,6 +182,10 @@ export default {
   },
   persist: ['history', 'AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
+    enablePyro: function () {
+      this.pyroEnabled = true;
+      setTimeout(x => this.pyroEnabled = false, 3000);
+    },
     toggleModal: function(x) {
       let textHTML = x == 'about' ? AboutPage() : x == 'rules' ? RulesPage() : x == 'scores' ? ScoringPage() : ''
       textHTML = `<div>${textHTML}<br>you played ${this.history.length} games<br>you won ${this.history.filter(x => x.winner === 'P1').length} times</div>`
@@ -183,13 +193,7 @@ export default {
         text: textHTML,
         title: x
       })
-  //     this.$modal.show({
-  //       title: x,
-  //       text: 
-  //       ,scrollable: true,height: 'auto'
-  //     }, {
-  // height: 'auto',scrollable: true,
-// })
+
     },
     playerName: function(playerID) {
       if (this.AIvsAI) {
@@ -274,6 +278,9 @@ export default {
             d.type = getRandomInt(1, 6)
           }
         }
+      }
+      if (this.getCombById(12).calc(this.dice) > 0) {
+        this.enablePyro();
       }
       const throwsLeft = --this.rollsLeft
       this.rollButtonMessage = (throwsLeft === 1 ? '1 roll left' : `${throwsLeft} rolls left`) + ` ${this.isAITurn ? "(AI)" : ""}`
