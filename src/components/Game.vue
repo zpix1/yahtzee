@@ -188,7 +188,15 @@ export default {
     },
     toggleModal: function(x) {
       let textHTML = x == 'about' ? AboutPage() : x == 'rules' ? RulesPage() : x == 'scores' ? ScoringPage() : ''
-      textHTML = `<div>${textHTML}<br>you played ${this.history.length} games<br>you won ${this.history.filter(x => x.winner === 'P1').length} times</div>`
+      textHTML = `<div>${textHTML}<br>you played ${this.history.length} games<br>you won ${this.history.filter(x => x.winner === 'P1').length} times<br>last five games:<br>`
+      const maxEntries = 5;
+      let sliced = this.history.slice(Math.max(this.history.length - maxEntries, 0))
+      for (let i = sliced.length - 1; i >= 0; i--) {
+        let current_datetime = new Date(sliced[i].date);
+        let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getDate() + " " + current_datetime.getHours() + ":" + current_datetime.getMinutes() + ":" + current_datetime.getSeconds() 
+        textHTML += `d:${formatted_date} winner: ${sliced[i].winner}, scores: ${(sliced[i].scores || [sliced[i].winscore]).join(', ')}<br>`
+      }
+      textHTML += '</div>'
       this.$modal.show('dialog',{
         text: textHTML,
         title: x
@@ -296,7 +304,7 @@ export default {
       const maxCombScore = (dice) => {
         let maxS = 0
         let maxC = null
-        for (let i = 0; i < this.combinations.length - 1; i++) {
+        for (let i = 0; i < this.combinations.length; i++) {
           let comb = this.combinations[i]
           if (combRelativeCalc(comb, dice) > maxS && this.scores[player][comb.id] === undefined) {
             maxS = combRelativeCalc(comb, dice)
@@ -506,7 +514,7 @@ export default {
             maxPlayer = i
           }
         }
-        this.history.push({date: new Date(), winner: this.playerName(maxPlayer + 1), winscore: maxScore})
+        this.history.push({date: new Date(), winner: this.playerName(maxPlayer + 1), scores: sums.slice(0, this.playersCount)})
         alert(`${this.playerName(maxPlayer + 1)} won with a score of ${maxScore}!`)
         this.reset()
       }

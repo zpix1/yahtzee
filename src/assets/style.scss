@@ -426,12 +426,12 @@ $box-shadow2: ();
     -ms-transform: $settings;
 }
 
-body {
-  margin:0;
-  padding:0;
-  background: #000;
-  overflow: hidden;
-}
+// body {
+//   margin:0;
+//   padding:0;
+//   background: #000;
+//   overflow: hidden;
+// }
 
 .pyro > .before, .pyro > .after {
   position: absolute;
