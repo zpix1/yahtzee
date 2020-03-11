@@ -145,6 +145,7 @@ webpackJsonp([1],[
 //
 //
 //
+//
 
 
 
@@ -153,30 +154,6 @@ webpackJsonp([1],[
 String.prototype.count = function (s1) {
   return (this.length - this.replace(new RegExp(s1, "g"), '').length) / s1.length;
 };
-
-function combRep(arr, l) {
-  if (l === void 0) l = arr.length; // Length of the combinations
-  var data = Array(l),
-      // Used to store state
-  results = []; // Array of results
-  (function f(pos, start) {
-    // Recursive function
-    if (pos === l) {
-      // End reached
-      results.push(data.slice()); // Add a copy of data to results
-      return;
-    }
-    for (var i = start; i < arr.length; ++i) {
-      data[pos] = arr[i]; // Update data
-      f(pos + 1, i); // Call f recursively
-    }
-  })(0, 0); // Start at index 0
-  return results; // Return results
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 /* harmony default export */ __webpack_exports__["a"] = ({
   name: 'game',
@@ -209,14 +186,7 @@ function sleep(ms) {
       history: []
     };
   },
-  mounted: function () {
-    // this.enablePyro();
-    // this.reset();
-    // this.playerTurn = 1;
-    // this.isAITurn = true;
-    // this.isAITurn = true;
-    // this.AITurn();
-  },
+  mounted: function () {},
   persist: ['history', 'AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
     enablePyro: function () {
@@ -255,7 +225,6 @@ function sleep(ms) {
       if (this.isAITurn) return;
       this.resetted = false;
       var gx = event.clientX - event.target.getClientRects()[0].x;
-      // var gy = event.clientY - event.target.getClientRects()[0].y
       if (gx < 8 && this.adjustments) {
         this.roll(true);
       } else {
@@ -284,16 +253,13 @@ function sleep(ms) {
           newDices[i] = Object.assign({}, this.dice[i]);
         }
 
-        // console.log(newDices.map((e) => e.type))
-
         for (var j = 0; j < 100; j++) {
           var tempDices = newDices.map(e => Object.assign({}, e)).slice();
           for (i = 0; i < tempDices.length; i++) {
             if (!tempDices[i].used) {
-              tempDices[i].type = Object(__WEBPACK_IMPORTED_MODULE_1__utility__["d" /* getRandomInt */])(1, 6);
+              tempDices[i].type = Object(__WEBPACK_IMPORTED_MODULE_1__utility__["e" /* getRandomInt */])(1, 6);
             }
           }
-          // console.log(tempDices.map((e) => e.type))
           allDices.push(tempDices);
         }
 
@@ -309,7 +275,6 @@ function sleep(ms) {
           }
         }
 
-        // console.log(ans)
         for (i = 0; i < this.dice.length; i++) {
           var d = this.dice[i];
           if (!d.used) {
@@ -320,7 +285,7 @@ function sleep(ms) {
         for (i = 0; i < this.dice.length; i++) {
           d = this.dice[i];
           if (!d.used) {
-            d.type = Object(__WEBPACK_IMPORTED_MODULE_1__utility__["d" /* getRandomInt */])(1, 6);
+            d.type = Object(__WEBPACK_IMPORTED_MODULE_1__utility__["e" /* getRandomInt */])(1, 6);
           }
         }
       }
@@ -348,21 +313,20 @@ function sleep(ms) {
             maxC = comb;
           }
         }
-        // console.log(dice.map((x) => x.type), maxC.name)
         return maxS;
       };
       const player = this.playerTurn;
       const bestCombinations = [12, 11, 10, 9];
       for (let rollID = 0; rollID < 3; rollID++) {
         this.roll(this.adjustments);
-        await sleep(this.aispeed);
+        await Object(__WEBPACK_IMPORTED_MODULE_1__utility__["f" /* sleep */])(this.aispeed);
         // Check for the evidently best combinations
         for (let i = 0; i < bestCombinations.length; i++) {
           let comb = this.getCombById(bestCombinations[i]);
           if (combRelativeCalc(comb, this.dice) != 0 && this.scores[player][comb.id] === undefined) {
             console.log("AI found the best comb: ", comb.name);
 
-            await sleep(this.aispeed);
+            await Object(__WEBPACK_IMPORTED_MODULE_1__utility__["f" /* sleep */])(this.aispeed);
             this.setScore(player, comb.id);
             this.isAITurn = false;
             return;
@@ -375,7 +339,7 @@ function sleep(ms) {
         for (let i = 0; i < actions.length; i++) {
           let allSum = 0;
           let allNumber = 0;
-          let outcomes = combRep([1, 2, 3, 4, 5], 5 - actions[i].length);
+          let outcomes = Object(__WEBPACK_IMPORTED_MODULE_1__utility__["d" /* combRep */])([1, 2, 3, 4, 5], 5 - actions[i].length);
           for (let ouI = 0; ouI < outcomes.length; ouI++) {
             let newDice = JSON.parse(JSON.stringify(this.dice));
             let usedOut = 0;
@@ -385,36 +349,29 @@ function sleep(ms) {
                 usedOut++;
               }
             }
-            // for (let acI = 0; acI < actions[i].length; acI++) {
-            //   newDice[actions[i][acI] - 1].type = outcomes[ouI][acI];
-            // }
             allNumber++;
             allSum += maxCombScore(newDice);
-            // console.log(newDice.map((x) => x.type ))
           }
 
           let cAverage = allSum / allNumber;
-          // console.log(cAverage)
           if (cAverage >= maxAverage) {
             maxAverage = cAverage;
             maxAction = actions[i];
           }
         }
-        console.log("current ma: ", maxAverage, maxAction);
         if (maxAction.length == 5) {
           break;
         }
         if (rollID != 2) {
           for (let i = 0; i < 5; i++) {
-            // console.log(maxAction)
             if (!maxAction.includes(i + 1)) this.dice[i].used = false;
           }
           for (let i = 0; i < maxAction.length; i++) {
-            await sleep(this.aispeed / 2);
+            await Object(__WEBPACK_IMPORTED_MODULE_1__utility__["f" /* sleep */])(this.aispeed / 2);
             if (!this.dice[maxAction[i] - 1].used) this.dice[maxAction[i] - 1].used = true;
           }
         }
-        await sleep(this.aispeed);
+        await Object(__WEBPACK_IMPORTED_MODULE_1__utility__["f" /* sleep */])(this.aispeed);
       }
 
       let maxS = 0;
@@ -494,9 +451,6 @@ function sleep(ms) {
         this.reset();
       }
     },
-    settings: function () {
-      this.showSettings = !this.showSettings;
-    },
     askForReset: function () {
       if (!this.resetted) {
         if (confirm('You have to reset score before change. Reset & continue?')) {
@@ -527,7 +481,6 @@ function sleep(ms) {
           this.playersCount += 1;
           this.isVsAI = false;
         }
-        // this.playersCount = this.playersCount === this.maxPlayersCount ? 2 : this.playersCount + 1
       }
     },
     winner: function () {
@@ -674,7 +627,7 @@ var Component = normalizeComponent(
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__ = __webpack_require__(3);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_77d4580a_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_7f517ac6_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(18);
 var normalizeComponent = __webpack_require__(1)
 /* script */
 
@@ -691,7 +644,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_77d4580a_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_7f517ac6_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -872,7 +825,7 @@ const combinations = [{
 }, {
   group: 1,
   id: 11,
-  name: 'large straight',
+  name: 'long straight',
   maxValue: 30,
   calc: function (dice) {
     let possibleCombs = [{ 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 }, { 5: 1, 2: 1, 3: 1, 4: 1, 6: 1 }];
@@ -919,7 +872,9 @@ const combinations = [{
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["d"] = getRandomInt;
+/* harmony export (immutable) */ __webpack_exports__["e"] = getRandomInt;
+/* harmony export (immutable) */ __webpack_exports__["d"] = combRep;
+/* harmony export (immutable) */ __webpack_exports__["f"] = sleep;
 /* harmony export (immutable) */ __webpack_exports__["b"] = RulesPage;
 /* harmony export (immutable) */ __webpack_exports__["a"] = AboutPage;
 /* harmony export (immutable) */ __webpack_exports__["c"] = ScoringPage;
@@ -933,6 +888,30 @@ function getRandomInt(min, max) {
     return getRandomInt(min, max);
   }
   return min + byteArray[0] % range;
+}
+
+function combRep(arr, l) {
+  if (l === void 0) l = arr.length; // Length of the combinations
+  var data = Array(l),
+      // Used to store state
+  results = []; // Array of results
+  (function f(pos, start) {
+    // Recursive function
+    if (pos === l) {
+      // End reached
+      results.push(data.slice()); // Add a copy of data to results
+      return;
+    }
+    for (var i = start; i < arr.length; ++i) {
+      data[pos] = arr[i]; // Update data
+      f(pos + 1, i); // Call f recursively
+    }
+  })(0, 0); // Start at index 0
+  return results; // Return results
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function RulesPage() {
@@ -1115,7 +1094,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
                     },on:{"click":function($event){_vm.setScoreUser(playerID, comb.id)}}},[_vm._v("\n                    "+_vm._s(_vm.calcCell(playerID, comb))+"\n                    "+_vm._s(_vm.scores[playerID][comb.id])+" \n                ")])})]})],2)}),_vm._v(" "),_c('tr',[_c('td',[_vm._v("bonus")]),_vm._v(" "),_vm._l(((_vm.playersCount)),function(_,playerID){return _c('td',{staticClass:"bonuscell",class:{ setscore: _vm.partSum(_vm.scores[playerID]) >= _vm.bonusRequire }},[_vm._v(_vm._s(_vm.partSum(_vm.scores[playerID]))+"/"+_vm._s(_vm.bonusRequire))])}),_vm._v(" "),_c('td',[_vm._v(_vm._s(_vm.combinations[12].name))]),_vm._v(" "),_vm._l((_vm.playersCount),function(_,playerID){return _c('td',{key:playerID+'_'+_vm.combinations[12].id,class:{ 
                     setscore: _vm.scores[playerID][_vm.combinations[12].id] !== undefined, 
                     scorecell: (_vm.rolled && _vm.playerTurn === playerID && _vm.scores[playerID][_vm.combinations[12].id] === undefined ? true : false) 
-                  },on:{"click":function($event){_vm.setScoreUser(playerID, _vm.combinations[12].id)}}},[_vm._v("\n                  "+_vm._s(_vm.calcCell(playerID, _vm.combinations[12]))+"\n                  "+_vm._s(_vm.scores[playerID][_vm.combinations[12].id])+" \n              ")])})],2),_vm._v(" "),_c('tr',[_vm._l((_vm.playersCount-2),function(playerID){return _c('td')}),_vm._v(" "),_c('td'),_c('td'),_c('td'),_vm._v(" "),_c('td',[_vm._v("total")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n                "+_vm._s(_vm.finalSum(_vm.scores[playerID-1]))+"\n              ")])})],2)],2)])]),_vm._v(" "),_c('div',{staticClass:"dice block"},[_vm._v("\n        dice\n        "),_c('Dice',{attrs:{"dice":_vm.dice,"willRoll":_vm.willRoll,"disabled":_vm.isAITurn}})],1),_vm._v(" "),_c('div',{staticClass:"buttons block"},[_c('div',{staticClass:"settings-icon",class:{ on: _vm.showSettings },on:{"click":_vm.settings}}),_vm._v(" "),_c('button',{staticClass:"button",class:{ unclickable: (_vm.rollsLeft === 0) || _vm.isAITurn, red: (_vm.rollsLeft === 0), blue: (_vm.rollsLeft > 0) },attrs:{"type":"button","id":"roll-dice"},on:{"mousedown":_vm.adsRoll}},[_vm._v("\n          "+_vm._s(_vm.rollButtonMessage)+"\n        ")])]),_vm._v(" "),_c('div',{staticClass:"settings block",class:{'hidden': !_vm.showSettings}},[_c('div',[_vm._v("\n          reset game "),_c('button',{staticClass:"danger",on:{"click":_vm.confirmReset}},[_vm._v("RESET")])]),_vm._v(" "),_c('div',[_vm._v("\n          adjustments "),_c('button',{class:{success: _vm.adjustments, info: !_vm.adjustments},on:{"click":function($event){_vm.askForReset() ? _vm.adjustments = !_vm.adjustments : null}}},[_vm._v(_vm._s(_vm.adjustments ? 'ON' : 'OFF'))])]),_vm._v(" "),_c('div',[_vm._v("\n          players count "),_c('button',{staticClass:"info",on:{"click":_vm.incPlayersCount}},[_vm._v(_vm._s(_vm.isVsAI ? 'AI' : _vm.playersCount))])]),_vm._v(" "),_c('div',[_vm._v("\n          AIvsAI "),_c('button',{staticClass:"info",on:{"click":_vm.startAIvsAI}},[_vm._v("fight")])]),_vm._v(" "),_c('div',[_vm._v("\n          about "),_c('button',{staticClass:"info",on:{"click":function($event){_vm.toggleModal('about')}}},[_vm._v("about")])])])]),_c('v-dialog')],1)}
+                  },on:{"click":function($event){_vm.setScoreUser(playerID, _vm.combinations[12].id)}}},[_vm._v("\n                  "+_vm._s(_vm.calcCell(playerID, _vm.combinations[12]))+"\n                  "+_vm._s(_vm.scores[playerID][_vm.combinations[12].id])+" \n              ")])})],2),_vm._v(" "),_c('tr',[_c('td'),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n                "+_vm._s(_vm.partSum(_vm.scores[playerID]) >= _vm.bonusRequire ? _vm.bonusSize: 0)+"\n              ")])}),_vm._v(" "),_c('td',[_vm._v("total")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n                "+_vm._s(_vm.finalSum(_vm.scores[playerID-1]))+"\n              ")])})],2)],2)])]),_vm._v(" "),_c('div',{staticClass:"dice block"},[_vm._v("\n        dice\n        "),_c('Dice',{attrs:{"dice":_vm.dice,"willRoll":_vm.willRoll,"disabled":_vm.isAITurn}})],1),_vm._v(" "),_c('div',{staticClass:"buttons block"},[_c('div',{staticClass:"settings-icon",class:{ on: _vm.showSettings },on:{"click":function($event){_vm.showSettings = !_vm.showSettings}}}),_vm._v(" "),_c('button',{staticClass:"button",class:{ unclickable: (_vm.rollsLeft === 0) || _vm.isAITurn, red: (_vm.rollsLeft === 0), blue: (_vm.rollsLeft > 0) },attrs:{"type":"button","id":"roll-dice"},on:{"mousedown":_vm.adsRoll}},[_vm._v("\n          "+_vm._s(_vm.rollButtonMessage)+"\n        ")])]),_vm._v(" "),_c('div',{staticClass:"settings block",class:{'hidden': !_vm.showSettings}},[_c('div',[_vm._v("\n          reset game "),_c('button',{staticClass:"danger",on:{"click":_vm.confirmReset}},[_vm._v("RESET")])]),_vm._v(" "),_c('div',[_vm._v("\n          adjustments "),_c('button',{class:{success: _vm.adjustments, info: !_vm.adjustments},on:{"click":function($event){_vm.askForReset() ? _vm.adjustments = !_vm.adjustments : null}}},[_vm._v(_vm._s(_vm.adjustments ? 'ON' : 'OFF'))])]),_vm._v(" "),_c('div',[_vm._v("\n          players count "),_c('button',{staticClass:"info",on:{"click":_vm.incPlayersCount}},[_vm._v(_vm._s(_vm.isVsAI ? 'AI' : _vm.playersCount))])]),_vm._v(" "),_c('div',[_vm._v("\n          AIvsAI "),_c('button',{staticClass:"info",on:{"click":_vm.startAIvsAI}},[_vm._v("fight")])]),_vm._v(" "),_c('div',[_vm._v("\n          about "),_c('button',{staticClass:"info",on:{"click":function($event){_vm.toggleModal('about')}}},[_vm._v("about")])])])]),_c('v-dialog')],1)}
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
@@ -1132,4 +1111,4 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 
 /***/ })
 ],[5]);
-//# sourceMappingURL=app.aaea9edcdc30c0fc1e40.js.map
+//# sourceMappingURL=app.d777be186e9b8fa9c37e.js.map
