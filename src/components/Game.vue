@@ -104,6 +104,15 @@
           AIvsAI <button class="info" @click="startAIvsAI">fight</button>
         </div>
         <div>
+          online-mode 
+          <span v-if="!onlineMode">
+            <button class="info" @click="onlineModeHost()">host</button> <button class="info" style="margin-right: 10px" @click="onlineModeJoin()">join</button>
+          </span>
+          <span v-else>
+            <button class="info" @click="onlineModeHost()">exit from {{ onlineMode }}</button> <button class="info" style="margin-right: 10px" @click="onlineModeJoin()">join</button>
+          </span>
+        </div>
+        <div>
           about <button class="info" @click="toggleModal('about')">about</button>
         </div>
       </div>
@@ -149,12 +158,13 @@ export default {
       infoModal: false,
       AIvsAI: false,
       pyroEnabled: false,
-      history: []
+      history: [],
+      onlineMode: null
     }
   },
   mounted: function () {
   },
-  persist: ['history', 'AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
+  persist: ['history', 'AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn', 'onlineMode'],
   methods: {
     enablePyro: function () {
       this.pyroEnabled = true;
@@ -480,6 +490,12 @@ export default {
         if (this.combinations[i].id == id) {
           return this.combinations[i];
         }
+      }
+    },
+    onlineModeJoin() {
+      let sessionCode = prompt('enter session code (XXXX)')
+      if (sessionCode.match(/^\d{4}$/)) {
+        this.onlineMode = sessionCode
       }
     }
   }
