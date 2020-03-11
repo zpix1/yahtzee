@@ -10,6 +10,28 @@ export function getRandomInt (min, max) {
   return min + (byteArray[0] % range)
 }
 
+export function combRep(arr, l) {
+  if(l === void 0) l = arr.length; // Length of the combinations
+  var data = Array(l),             // Used to store state
+      results = [];                // Array of results
+  (function f(pos, start) {        // Recursive function
+    if(pos === l) {                // End reached
+      results.push(data.slice());  // Add a copy of data to results
+      return;
+    }
+    for(var i=start; i<arr.length; ++i) {
+      data[pos] = arr[i];          // Update data
+      f(pos+1, i);                 // Call f recursively
+    }
+  })(0, 0);                        // Start at index 0
+  return results;                  // Return results
+}
+
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
 export function RulesPage () { return `
 <h1>How to play Yahtzee</h1>
 <h3>Object of the game</h3>

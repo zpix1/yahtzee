@@ -173,7 +173,7 @@ export const combinations = [
   }, {
     group: 1,
     id: 11,
-    name: 'large straight',
+    name: 'long straight',
     maxValue: 30,
     calc: function (dice) {
       let possibleCombs = [

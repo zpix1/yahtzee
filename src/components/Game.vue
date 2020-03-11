@@ -64,9 +64,10 @@
             </tr>
 
             <tr>
-              <td v-for="playerID in playersCount-2">
+              <td></td>
+              <td v-for="playerID in playersCount">
+                {{  partSum(scores[playerID]) >= bonusRequire ? bonusSize: 0 }}
               </td>
-              <td></td><td></td><td></td>
               <td>total</td>
               <td v-for="playerID in playersCount">
                 {{ finalSum(scores[playerID-1]) }}
@@ -82,7 +83,7 @@
       
       <div class="buttons block">
         <div class="settings-icon"
-          @click="settings"
+          @click="showSettings = !showSettings"
           v-bind:class="{ on: showSettings }"
         ></div>
         <button @mousedown="adsRoll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: (rollsLeft === 0) || isAITurn, red: (rollsLeft === 0), blue: (rollsLeft > 0) }">
@@ -113,32 +114,11 @@
 
 <script>
 import { defaultDice, defaultScores, combinations } from '../constants'
-import { getRandomInt, AboutPage, RulesPage, ScoringPage } from '../utility'
+import { getRandomInt, combRep, sleep,  AboutPage, RulesPage, ScoringPage } from '../utility'
 import Dice from './Dice'
 
 String.prototype.count = function(s1) { 
     return (this.length - this.replace(new RegExp(s1,"g"), '').length) / s1.length;
-}
-
-function combRep(arr, l) {
-  if(l === void 0) l = arr.length; // Length of the combinations
-  var data = Array(l),             // Used to store state
-      results = [];                // Array of results
-  (function f(pos, start) {        // Recursive function
-    if(pos === l) {                // End reached
-      results.push(data.slice());  // Add a copy of data to results
-      return;
-    }
-    for(var i=start; i<arr.length; ++i) {
-      data[pos] = arr[i];          // Update data
-      f(pos+1, i);                 // Call f recursively
-    }
-  })(0, 0);                        // Start at index 0
-  return results;                  // Return results
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export default {
@@ -173,12 +153,6 @@ export default {
     }
   },
   mounted: function () {
-    // this.enablePyro();
-    // this.reset();
-    // this.playerTurn = 1;
-    // this.isAITurn = true;
-    // this.isAITurn = true;
-    // this.AITurn();
   },
   persist: ['history', 'AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
@@ -201,7 +175,6 @@ export default {
         text: textHTML,
         title: x
       })
-
     },
     playerName: function(playerID) {
       if (this.AIvsAI) {
@@ -220,7 +193,6 @@ export default {
         return
       this.resetted = false
       var gx = event.clientX - event.target.getClientRects()[0].x
-      // var gy = event.clientY - event.target.getClientRects()[0].y
       if (gx < 8 && this.adjustments) {
         this.roll(true)
       } else {
@@ -247,8 +219,6 @@ export default {
           newDices[i] = Object.assign({}, this.dice[i])
         }
 
-        // console.log(newDices.map((e) => e.type))
-
         for (var j = 0; j < 100; j++) {
           var tempDices = newDices.map(e => Object.assign({}, e)).slice()
           for (i = 0; i < tempDices.length; i++) {
@@ -256,7 +226,6 @@ export default {
               tempDices[i].type = getRandomInt(1, 6)
             }
           }
-          // console.log(tempDices.map((e) => e.type))
           allDices.push(tempDices)
         }
 
@@ -272,7 +241,6 @@ export default {
           }
         }
 
-        // console.log(ans)
         for (i = 0; i < this.dice.length; i++) {
           var d = this.dice[i]
           if (!d.used) {
@@ -311,7 +279,6 @@ export default {
             maxC = comb
           }
         }
-        // console.log(dice.map((x) => x.type), maxC.name)
         return maxS
       }
       const player = this.playerTurn;
@@ -348,28 +315,21 @@ export default {
                 usedOut++;
               }
             }
-            // for (let acI = 0; acI < actions[i].length; acI++) {
-            //   newDice[actions[i][acI] - 1].type = outcomes[ouI][acI];
-            // }
             allNumber++;
             allSum += maxCombScore(newDice)
-            // console.log(newDice.map((x) => x.type ))
           }
           
           let cAverage = allSum / allNumber
-          // console.log(cAverage)
           if (cAverage >= maxAverage) {
             maxAverage = cAverage
             maxAction = actions[i]
           }
         }
-        console.log("current ma: ", maxAverage, maxAction)
         if (maxAction.length == 5) {
           break
         }
         if (rollID != 2) {
           for (let i = 0; i < 5; i++) {
-            // console.log(maxAction)
             if (!maxAction.includes(i + 1))
               this.dice[i].used = false
           }
@@ -459,9 +419,6 @@ export default {
         this.reset()
       }
     },
-    settings: function () {
-      this.showSettings = !this.showSettings
-    },
     askForReset: function () {
       if (!this.resetted) {
         if (confirm('You have to reset score before change. Reset & continue?')) {
@@ -492,7 +449,6 @@ export default {
           this.playersCount += 1
           this.isVsAI = false
         }
-        // this.playersCount = this.playersCount === this.maxPlayersCount ? 2 : this.playersCount + 1
       }
     },
     winner: function () {
