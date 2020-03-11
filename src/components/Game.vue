@@ -78,7 +78,7 @@
       </div>
       <div class="dice block">
         dice
-        <Dice :dice="dice" :willRoll="willRoll" :disabled="isAITurn"/>
+        <Dice :dice="dice" :willRoll="willRoll" :disabled="isAITurn || isNotYourTurn" :onclick="emitUpdate"/>
       </div>
       
       <div class="buttons block">
@@ -86,8 +86,8 @@
           @click="showSettings = !showSettings"
           v-bind:class="{ on: showSettings }"
         ></div>
-        <button @mousedown="adsRoll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: (rollsLeft === 0) || isAITurn, red: (rollsLeft === 0), blue: (rollsLeft > 0) }">
-          {{ rollButtonMessage }}
+        <button @mousedown="adsRoll" type="button" id="roll-dice" class="button" v-bind:class="{ unclickable: (rollsLeft === 0 || isNotYourTurn) || isAITurn, red: (rollsLeft === 0), blue: (rollsLeft > 0) }">
+          {{ !isNotYourTurn ? rollButtonMessage : rollButtonMessage + ' (not your turn)'}}
         </button>
       </div>
       <div v-bind:class="{'hidden': !showSettings}" class="settings block">
@@ -109,7 +109,7 @@
             <button class="info" @click="onlineModeHost()">host</button> <button class="info" style="margin-right: 10px" @click="onlineModeJoin()">join</button>
           </span>
           <span v-else>
-            <button class="info" @click="onlineModeHost()">exit from {{ onlineMode }}</button> <button class="info" style="margin-right: 10px" @click="onlineModeJoin()">join</button>
+            <button class="info" @click="exitFromOnlineMode()">exit from {{ onlineMode }}</button> <button class="info" style="margin-right: 10px" @click="onlineModeJoin()">join</button>
           </span>
         </div>
         <div>
@@ -120,11 +120,14 @@
   </div>
 </template>
 
-
 <script>
 import { defaultDice, defaultScores, combinations } from '../constants'
 import { getRandomInt, combRep, sleep,  AboutPage, RulesPage, ScoringPage } from '../utility'
 import Dice from './Dice'
+
+import io from 'socket.io-client'
+const SOCKET_IO_ADDR = 'localhost:3000'
+var socket = io(SOCKET_IO_ADDR)
 
 String.prototype.count = function(s1) { 
     return (this.length - this.replace(new RegExp(s1,"g"), '').length) / s1.length;
@@ -159,12 +162,21 @@ export default {
       AIvsAI: false,
       pyroEnabled: false,
       history: [],
-      onlineMode: null
+      onlineMode: null,
+      onlineModePlayerTurn: null
     }
   },
   mounted: function () {
+    // this.onlineMode = null;
   },
-  persist: ['history', 'AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn', 'onlineMode'],
+  computed: {
+    isNotYourTurn: function() {
+      if (this.onlineMode)
+      return this.onlineModePlayerTurn != this.playerTurn;
+      return false;
+    }
+  },
+  persist: ['history', 'AIvsAI', 'scores', 'playerTurn', 'rollsLeft', 'rolled', 'dice', 'rollButtonMessage', 'adjustments', 'playersCount', 'resetted', 'isVsAI', 'isAITurn'],
   methods: {
     enablePyro: function () {
       this.pyroEnabled = true;
@@ -200,6 +212,8 @@ export default {
     },
     adsRoll: function (event) {
       if (this.isAITurn)
+        return
+      if (this.isNotYourTurn)
         return
       this.resetted = false
       var gx = event.clientX - event.target.getClientRects()[0].x
@@ -273,6 +287,11 @@ export default {
 
       if (this.rollsLeft === 0) {
         this.rollButtonMessage = 'no rolls left' + ` ${this.isAITurn ? "(AI)" : ""}`
+      }
+
+      
+      if (this.onlineMode) {
+        this.emitUpdate()
       }
     },
     AITurn: async function () {
@@ -371,7 +390,7 @@ export default {
       }
     },
     setScore: async function (player, combId) {
-      if ((this.rolled) && (player === this.playerTurn) && (!this.scores[player].hasOwnProperty(combId))) {
+      if ((this.rolled) && (player === this.playerTurn) && (!this.scores[player].hasOwnProperty(combId)) && (!this.isNotYourTurn)) {
         var comb = this.combinations.find(e => e.id === combId)
 
         var ans = comb.calc(this.dice)
@@ -384,12 +403,14 @@ export default {
         this.dice = defaultDice()
         this.rollsLeft = 3
 
+        this.emitUpdate()
         this.winner()
 
         if ((this.isVsAI && this.playerTurn == 1) || (this.AIvsAI)) {
           this.isAITurn = true
           this.AITurn()
         }
+        this.emitUpdate()
       }
     },
     partSum: function (obj) {
@@ -419,10 +440,13 @@ export default {
       this.rollsLeft = 3
       this.resetted = true
       this.isAITurn = false
+      this.adjustments = false
       this.rolled = false
       this.rollButtonMessage = 'P1 turn'
       this.dice = defaultDice()
       this.scores = defaultScores()
+
+      this.emitUpdate()
     },
     confirmReset: function () {
       if (confirm('Are you sure you want to reset the game?')) {
@@ -485,18 +509,73 @@ export default {
         this.reset()
       }
     },
-    getCombById(id) {
+    getCombById: function(id) {
       for (let i = 0; i < this.combinations.length; i++) {
         if (this.combinations[i].id == id) {
           return this.combinations[i];
         }
       }
     },
-    onlineModeJoin() {
+    emitUpdate: function() {
+      if (this.onlineMode) {
+        socket.emit('message', {action: 'done', state: {'text': 'lul', scores: this.scores, dice: this.dice, rollsLeft: this.rollsLeft, scores: this.scores, rollButtonMessage: this.rollButtonMessage, playerTurn: this.playerTurn, rolled: this.rolled} })
+      }
+    },
+    initSocketIo: function() {
+      socket.on('message', (message) => {
+        if (message.action === 'conn_ok') {
+          this.onlineMode = message.sessionCode
+        } else if (message.action === 'update') {
+          this.scores = message.state.scores
+          this.rollsLeft = message.state.rollsLeft
+          this.playerTurn = message.state.playerTurn
+          this.dice = message.state.dice
+          this.rollButtonMessage = message.state.rollButtonMessage
+          this.playerTurn = message.state.playerTurn
+          this.rolled = message.state.rolled
+          this.winner()
+        } else if (message.action === 'error' || message.action === 'alert') {
+          alert(message.message)
+        } else if (message.action === 'start') {
+          this.reset();
+          this.onlineModePlayerTurn = message.playerID;
+        }
+        console.log(message);
+      })
+    },
+    onlineModeHost: function() {
+      if (!this.askForReset()) {
+        return
+      }
+
+      this.playerTurn = 2;
+      this.isVsAI = false;
+
+      this.initSocketIo();
+      socket.emit('message', {action: 'host'})
+    },
+    onlineModeJoin: function() {
+      if (!this.askForReset()) {
+        return
+      }
+
+      this.playerTurn = 2;
+      this.isVsAI = false;
+
       let sessionCode = prompt('enter session code (XXXX)')
       if (sessionCode.match(/^\d{4}$/)) {
         this.onlineMode = sessionCode
+      } else {
+        return
       }
+
+      this.initSocketIo()
+
+      socket.emit('message', {action: 'join', sessionCode: sessionCode})
+    },
+    exitFromOnlineMode: function() {
+      this.onlineMode = false;
+      this.onlineModePlayerTurn = null;
     }
   }
 }
