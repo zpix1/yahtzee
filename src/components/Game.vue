@@ -127,7 +127,7 @@ import Dice from './Dice'
 
 import io from 'socket.io-client'
 const SOCKET_IO_ADDR = 'localhost:3000'
-var socket = io(SOCKET_IO_ADDR)
+var socket = null;
 
 String.prototype.count = function(s1) { 
     return (this.length - this.replace(new RegExp(s1,"g"), '').length) / s1.length;
@@ -163,7 +163,8 @@ export default {
       pyroEnabled: false,
       history: [],
       onlineMode: null,
-      onlineModePlayerTurn: null
+      onlineModePlayerTurn: null,
+      io: null
     }
   },
   mounted: function () {
@@ -518,11 +519,22 @@ export default {
     },
     emitUpdate: function() {
       if (this.onlineMode) {
-        socket.emit('message', {action: 'done', state: {'text': 'lul', scores: this.scores, dice: this.dice, rollsLeft: this.rollsLeft, scores: this.scores, rollButtonMessage: this.rollButtonMessage, playerTurn: this.playerTurn, rolled: this.rolled} })
+        socket.emit('message', {action: 'done', state: { scores: this.scores, dice: this.dice, rollsLeft: this.rollsLeft, scores: this.scores, rollButtonMessage: this.rollButtonMessage, playerTurn: this.playerTurn, rolled: this.rolled} })
       }
     },
     initSocketIo: function() {
+
+      if (socket == null) {
+        socket = io(SOCKET_IO_ADDR)
+      }
+      socket.on('error', (err) => {
+        console.log(err)
+        socket = null
+        this.exitFromOnlineMode()
+      })
+
       socket.on('message', (message) => {
+        // console.log(message)
         if (message.action === 'conn_ok') {
           this.onlineMode = message.sessionCode
         } else if (message.action === 'update') {
@@ -537,10 +549,9 @@ export default {
         } else if (message.action === 'error' || message.action === 'alert') {
           alert(message.message)
         } else if (message.action === 'start') {
-          this.reset();
-          this.onlineModePlayerTurn = message.playerID;
+          this.reset()
+          this.onlineModePlayerTurn = message.playerID
         }
-        console.log(message);
       })
     },
     onlineModeHost: function() {
@@ -548,10 +559,12 @@ export default {
         return
       }
 
-      this.playerTurn = 2;
-      this.isVsAI = false;
+      this.exitFromOnlineMode()
 
-      this.initSocketIo();
+      this.playerTurn = 2
+      this.isVsAI = false
+
+      this.initSocketIo()
       socket.emit('message', {action: 'host'})
     },
     onlineModeJoin: function() {
@@ -559,23 +572,26 @@ export default {
         return
       }
 
+      this.exitFromOnlineMode()
+
       this.playerTurn = 2;
       this.isVsAI = false;
 
-      let sessionCode = prompt('enter session code (XXXX)')
-      if (sessionCode.match(/^\d{4}$/)) {
-        this.onlineMode = sessionCode
-      } else {
+      let sessionCode = prompt('enter session code (XXXX)') || ''
+      if (!sessionCode.match(/^\d{4}$/)) {
         return
       }
 
       this.initSocketIo()
-
       socket.emit('message', {action: 'join', sessionCode: sessionCode})
     },
     exitFromOnlineMode: function() {
-      this.onlineMode = false;
-      this.onlineModePlayerTurn = null;
+      this.onlineMode = false
+      this.onlineModePlayerTurn = null
+      if (socket != null) {
+        socket.disconnect()
+      }
+      socket = null
     }
   }
 }
