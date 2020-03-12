@@ -199,8 +199,7 @@ String.prototype.count = function (s1) {
       pyroEnabled: false,
       history: [],
       onlineMode: null,
-      onlineModePlayerTurn: null,
-      io: null
+      onlineModePlayerTurn: null
     };
   },
   mounted: function () {
@@ -566,18 +565,28 @@ String.prototype.count = function (s1) {
       });
 
       socket.on('message', message => {
-        // console.log(message)
         if (message.action === 'conn_ok') {
           this.onlineMode = message.sessionCode;
         } else if (message.action === 'update') {
           this.scores = message.state.scores;
+
+          if (this.rollsLeft != message.state.rollsLeft && message.state.rollsLeft != 3) {
+            this.willRoll = true;
+            setTimeout(() => {
+              this.willRoll = false;
+            }, 500);
+          }
+
           this.rollsLeft = message.state.rollsLeft;
+          let oldPlayerTurn = this.playerTurn;
           this.playerTurn = message.state.playerTurn;
           this.dice = message.state.dice;
           this.rollButtonMessage = message.state.rollButtonMessage;
           this.playerTurn = message.state.playerTurn;
           this.rolled = message.state.rolled;
-          this.winner();
+          if (this.playerTurn != oldPlayerTurn) {
+            this.winner();
+          }
         } else if (message.action === 'error' || message.action === 'alert') {
           alert(message.message);
         } else if (message.action === 'start') {
@@ -738,7 +747,7 @@ var Component = normalizeComponent(
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__ = __webpack_require__(14);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_6efffbb1_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(69);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_097de75f_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(69);
 var normalizeComponent = __webpack_require__(8)
 /* script */
 
@@ -755,7 +764,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_6efffbb1_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_097de75f_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -1217,7 +1226,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
                     },on:{"click":function($event){_vm.setScoreUser(playerID, comb.id)}}},[_vm._v("\n                    "+_vm._s(_vm.calcCell(playerID, comb))+"\n                    "+_vm._s(_vm.scores[playerID][comb.id])+" \n                ")])})]})],2)}),_vm._v(" "),_c('tr',[_c('td',[_vm._v("bonus")]),_vm._v(" "),_vm._l(((_vm.playersCount)),function(_,playerID){return _c('td',{staticClass:"bonuscell",class:{ setscore: _vm.partSum(_vm.scores[playerID]) >= _vm.bonusRequire }},[_vm._v(_vm._s(_vm.partSum(_vm.scores[playerID]))+"/"+_vm._s(_vm.bonusRequire))])}),_vm._v(" "),_c('td',[_vm._v(_vm._s(_vm.combinations[12].name))]),_vm._v(" "),_vm._l((_vm.playersCount),function(_,playerID){return _c('td',{key:playerID+'_'+_vm.combinations[12].id,class:{ 
                     setscore: _vm.scores[playerID][_vm.combinations[12].id] !== undefined, 
                     scorecell: (_vm.rolled && _vm.playerTurn === playerID && _vm.scores[playerID][_vm.combinations[12].id] === undefined ? true : false) 
-                  },on:{"click":function($event){_vm.setScoreUser(playerID, _vm.combinations[12].id)}}},[_vm._v("\n                  "+_vm._s(_vm.calcCell(playerID, _vm.combinations[12]))+"\n                  "+_vm._s(_vm.scores[playerID][_vm.combinations[12].id])+" \n              ")])})],2),_vm._v(" "),_c('tr',[_c('td'),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n                "+_vm._s(_vm.partSum(_vm.scores[playerID]) >= _vm.bonusRequire ? _vm.bonusSize: 0)+"\n              ")])}),_vm._v(" "),_c('td',[_vm._v("total")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n                "+_vm._s(_vm.finalSum(_vm.scores[playerID-1]))+"\n              ")])})],2)],2)])]),_vm._v(" "),_c('div',{staticClass:"dice block"},[_vm._v("\n        dice\n        "),_c('Dice',{attrs:{"dice":_vm.dice,"willRoll":_vm.willRoll,"disabled":_vm.isAITurn || _vm.isNotYourTurn,"onclick":_vm.emitUpdate}})],1),_vm._v(" "),_c('div',{staticClass:"buttons block"},[_c('div',{staticClass:"settings-icon",class:{ on: _vm.showSettings },on:{"click":function($event){_vm.showSettings = !_vm.showSettings}}}),_vm._v(" "),_c('button',{staticClass:"button",class:{ unclickable: (_vm.rollsLeft === 0 || _vm.isNotYourTurn) || _vm.isAITurn, red: (_vm.rollsLeft === 0), blue: (_vm.rollsLeft > 0) },attrs:{"type":"button","id":"roll-dice"},on:{"mousedown":_vm.adsRoll}},[_vm._v("\n          "+_vm._s(!_vm.isNotYourTurn ? _vm.rollButtonMessage : _vm.rollButtonMessage + ' (not your turn)')+"\n        ")])]),_vm._v(" "),_c('div',{staticClass:"settings block",class:{'hidden': !_vm.showSettings}},[_c('div',[_vm._v("\n          reset game "),_c('button',{staticClass:"danger",on:{"click":_vm.confirmReset}},[_vm._v("RESET")])]),_vm._v(" "),_c('div',[_vm._v("\n          adjustments "),_c('button',{class:{success: _vm.adjustments, info: !_vm.adjustments},on:{"click":function($event){_vm.askForReset() ? _vm.adjustments = !_vm.adjustments : null}}},[_vm._v(_vm._s(_vm.adjustments ? 'ON' : 'OFF'))])]),_vm._v(" "),_c('div',[_vm._v("\n          players count "),_c('button',{staticClass:"info",on:{"click":_vm.incPlayersCount}},[_vm._v(_vm._s(_vm.isVsAI ? 'AI' : _vm.playersCount))])]),_vm._v(" "),_c('div',[_vm._v("\n          AIvsAI "),_c('button',{staticClass:"info",on:{"click":_vm.startAIvsAI}},[_vm._v("fight")])]),_vm._v(" "),_c('div',[_vm._v("\n          online-mode \n          "),(!_vm.onlineMode)?_c('span',[_c('button',{staticClass:"info",on:{"click":function($event){_vm.onlineModeHost()}}},[_vm._v("host")]),_vm._v(" "),_c('button',{staticClass:"info",staticStyle:{"margin-right":"10px"},on:{"click":function($event){_vm.onlineModeJoin()}}},[_vm._v("join")])]):_c('span',[_c('button',{staticClass:"info",on:{"click":function($event){_vm.exitFromOnlineMode()}}},[_vm._v("exit from "+_vm._s(_vm.onlineMode))]),_vm._v(" "),_c('button',{staticClass:"info",staticStyle:{"margin-right":"10px"},on:{"click":function($event){_vm.onlineModeJoin()}}},[_vm._v("join")])])]),_vm._v(" "),_c('div',[_vm._v("\n          about "),_c('button',{staticClass:"info",on:{"click":function($event){_vm.toggleModal('about')}}},[_vm._v("about")])])])]),_c('v-dialog')],1)}
+                  },on:{"click":function($event){_vm.setScoreUser(playerID, _vm.combinations[12].id)}}},[_vm._v("\n                  "+_vm._s(_vm.calcCell(playerID, _vm.combinations[12]))+"\n                  "+_vm._s(_vm.scores[playerID][_vm.combinations[12].id])+" \n              ")])})],2),_vm._v(" "),_c('tr',[_c('td'),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n                "+_vm._s(_vm.partSum(_vm.scores[playerID - 1]) >= _vm.bonusRequire ? _vm.bonusSize: 0)+"\n              ")])}),_vm._v(" "),_c('td',[_vm._v("total")]),_vm._v(" "),_vm._l((_vm.playersCount),function(playerID){return _c('td',[_vm._v("\n                "+_vm._s(_vm.finalSum(_vm.scores[playerID - 1]))+"\n              ")])})],2)],2)])]),_vm._v(" "),_c('div',{staticClass:"dice block"},[_vm._v("\n        dice\n        "),_c('Dice',{attrs:{"dice":_vm.dice,"willRoll":_vm.willRoll,"disabled":_vm.isAITurn || _vm.isNotYourTurn,"onclick":_vm.emitUpdate}})],1),_vm._v(" "),_c('div',{staticClass:"buttons block"},[_c('div',{staticClass:"settings-icon",class:{ on: _vm.showSettings },on:{"click":function($event){_vm.showSettings = !_vm.showSettings}}}),_vm._v(" "),_c('button',{staticClass:"button",class:{ unclickable: (_vm.rollsLeft === 0 || _vm.isNotYourTurn) || _vm.isAITurn, red: (_vm.rollsLeft === 0), blue: (_vm.rollsLeft > 0) },attrs:{"type":"button","id":"roll-dice"},on:{"mousedown":_vm.adsRoll}},[_vm._v("\n          "+_vm._s(!_vm.isNotYourTurn ? _vm.rollButtonMessage : _vm.rollButtonMessage + ' (not your turn)')+"\n        ")])]),_vm._v(" "),_c('div',{staticClass:"settings block",class:{'hidden': !_vm.showSettings}},[_c('div',[_vm._v("\n          reset game "),_c('button',{staticClass:"danger",on:{"click":_vm.confirmReset}},[_vm._v("RESET")])]),_vm._v(" "),_c('div',[_vm._v("\n          adjustments "),_c('button',{class:{success: _vm.adjustments, info: !_vm.adjustments},on:{"click":function($event){_vm.askForReset() ? _vm.adjustments = !_vm.adjustments : null}}},[_vm._v(_vm._s(_vm.adjustments ? 'ON' : 'OFF'))])]),_vm._v(" "),_c('div',[_vm._v("\n          players count "),_c('button',{staticClass:"info",on:{"click":_vm.incPlayersCount}},[_vm._v(_vm._s(_vm.isVsAI ? 'AI' : _vm.playersCount))])]),_vm._v(" "),_c('div',[_vm._v("\n          AIvsAI "),_c('button',{staticClass:"info",on:{"click":_vm.startAIvsAI}},[_vm._v("fight")])]),_vm._v(" "),_c('div',[_vm._v("\n          online-mode \n          "),(!_vm.onlineMode)?_c('span',[_c('button',{staticClass:"info",on:{"click":function($event){_vm.onlineModeHost()}}},[_vm._v("host")]),_vm._v(" "),_c('button',{staticClass:"info",staticStyle:{"margin-right":"10px"},on:{"click":function($event){_vm.onlineModeJoin()}}},[_vm._v("join")])]):_c('span',[_c('button',{staticClass:"info",on:{"click":function($event){_vm.exitFromOnlineMode()}}},[_vm._v("exit from "+_vm._s(_vm.onlineMode))]),_vm._v(" "),_c('button',{staticClass:"info",staticStyle:{"margin-right":"10px"},on:{"click":function($event){_vm.onlineModeJoin()}}},[_vm._v("join")])])]),_vm._v(" "),_c('div',[_vm._v("\n          about "),_c('button',{staticClass:"info",on:{"click":function($event){_vm.toggleModal('about')}}},[_vm._v("about")])])])]),_c('v-dialog')],1)}
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
@@ -1236,4 +1245,4 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 /***/ })
 
 },[28]);
-//# sourceMappingURL=app.c0c9adcd33ea8f591f02.js.map
+//# sourceMappingURL=app.9e06eeb6bb64312d5f3c.js.map

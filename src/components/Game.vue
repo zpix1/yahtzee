@@ -66,11 +66,11 @@
             <tr>
               <td></td>
               <td v-for="playerID in playersCount">
-                {{  partSum(scores[playerID]) >= bonusRequire ? bonusSize: 0 }}
+                {{  partSum(scores[playerID - 1]) >= bonusRequire ? bonusSize: 0 }}
               </td>
               <td>total</td>
               <td v-for="playerID in playersCount">
-                {{ finalSum(scores[playerID-1]) }}
+                {{ finalSum(scores[playerID - 1]) }}
               </td>
             </tr>
           </tbody>
@@ -163,8 +163,7 @@ export default {
       pyroEnabled: false,
       history: [],
       onlineMode: null,
-      onlineModePlayerTurn: null,
-      io: null
+      onlineModePlayerTurn: null
     }
   },
   mounted: function () {
@@ -534,18 +533,26 @@ export default {
       })
 
       socket.on('message', (message) => {
-        // console.log(message)
         if (message.action === 'conn_ok') {
           this.onlineMode = message.sessionCode
         } else if (message.action === 'update') {
           this.scores = message.state.scores
+
+          if (this.rollsLeft != message.state.rollsLeft && message.state.rollsLeft != 3) {
+            this.willRoll = true
+            setTimeout(() => { this.willRoll = false }, 500)
+          }
+
           this.rollsLeft = message.state.rollsLeft
+          let oldPlayerTurn = this.playerTurn
           this.playerTurn = message.state.playerTurn
           this.dice = message.state.dice
           this.rollButtonMessage = message.state.rollButtonMessage
           this.playerTurn = message.state.playerTurn
           this.rolled = message.state.rolled
-          this.winner()
+          if (this.playerTurn != oldPlayerTurn) {
+            this.winner()
+          }
         } else if (message.action === 'error' || message.action === 'alert') {
           alert(message.message)
         } else if (message.action === 'start') {
