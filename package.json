@@ -2,6 +2,7 @@
     "name": "yahtzee-online-mode-server",
     "version": "0.0.1",
     "description": "",
+    "start": "node index.js",
     "dependencies": {
         "socket.io": "^2.3.0"
     }
