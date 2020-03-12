@@ -1,5 +1,6 @@
 var io = require('socket.io')(process.env.PORT || 3000);
-io.origins('*:*');
+io.set('origins', 'https://zpix1.github.io:80');
+
 var userToSessionCode = {};
 var sessionCodesDB = {};
 
