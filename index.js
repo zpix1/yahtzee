@@ -1,4 +1,4 @@
-var io = require('socket.io')(80);
+var io = require('socket.io')(process.env.PORT || 3000);
 
 io.origins('*:*');
 
