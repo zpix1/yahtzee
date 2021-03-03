@@ -126,7 +126,7 @@ import { getRandomInt, combRep, sleep,  AboutPage, RulesPage, ScoringPage } from
 import Dice from './Dice'
 
 import io from 'socket.io-client'
-const SOCKET_IO_ADDR = 'https://yahtzee-online-mode-server.herokuapp.com'
+const SOCKET_IO_ADDR = 'https://r45.xyz/'
 var socket = null;
 
 String.prototype.count = function(s1) { 
@@ -524,7 +524,9 @@ export default {
     initSocketIo: function() {
 
       if (socket == null) {
-        socket = io(SOCKET_IO_ADDR)
+        socket = io(SOCKET_IO_ADDR, {
+          path: '/yahtzee.io'
+        })
       }
       socket.on('error', (err) => {
         console.log(err)
