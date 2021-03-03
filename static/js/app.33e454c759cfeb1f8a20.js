@@ -162,7 +162,7 @@ webpackJsonp([1],{
 
 
 
-const SOCKET_IO_ADDR = 'https://yahtzee-online-mode-server.herokuapp.com';
+const SOCKET_IO_ADDR = 'https://r45.xyz/';
 var socket = null;
 
 String.prototype.count = function (s1) {
@@ -556,7 +556,9 @@ String.prototype.count = function (s1) {
     initSocketIo: function () {
 
       if (socket == null) {
-        socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default()(SOCKET_IO_ADDR);
+        socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client___default()(SOCKET_IO_ADDR, {
+          path: '/yahtzee.io'
+        });
       }
       socket.on('error', err => {
         console.log(err);
@@ -747,7 +749,7 @@ var Component = normalizeComponent(
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__ = __webpack_require__(14);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_15e37f18_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(69);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_ef3d05c6_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__ = __webpack_require__(69);
 var normalizeComponent = __webpack_require__(8)
 /* script */
 
@@ -764,7 +766,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Game_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_15e37f18_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_ef3d05c6_hasScoped_false_transformToRequire_video_src_poster_source_src_img_src_image_xlink_href_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Game_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -1245,4 +1247,4 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 /***/ })
 
 },[28]);
-//# sourceMappingURL=app.0ade2dd432f723a6afec.js.map
+//# sourceMappingURL=app.33e454c759cfeb1f8a20.js.map
