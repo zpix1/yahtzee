@@ -1,4 +1,6 @@
-var io = require('socket.io')(process.env.PORT || 3000);
+var io = require('socket.io')(process.env.PORT || 8080, {
+    'path': '/yahtzee.io'
+});
 
 io.origins('*:*');
 
@@ -50,7 +52,7 @@ function filterState(state) {
 
 io.on('connection', function(socket) {
     log('a user connected');
-    
+
     socket.on('message', function(msg) {
         log(msg);
         if (msg.action === 'host') {
