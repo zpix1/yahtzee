@@ -4,7 +4,7 @@
   <div class="before"></div>
   <div class="after"></div>
 </div>
-    <h1 class="header">yahtzee <a @click="toggleModal('about')">info</a></h1>
+    <h1 class="header">yahtzee <a style="cursor: pointer;" @click="toggleModal('about')">info</a></h1>
   <!-- <v-dialog/> -->
     <div class="wrapper card">
       <div class="scores block">
@@ -19,12 +19,12 @@
           </colgroup>
           <thead>
             <tr>
-              <th>co</th>
+              <th>comb</th>
               <th v-for="playerID in playersCount">
                 {{ playerName(playerID) }}
               </th>
 
-              <th>co</th>
+              <th>comb</th>
               <th v-for="playerID in playersCount">
                 {{ playerName(playerID) }}
               </th>

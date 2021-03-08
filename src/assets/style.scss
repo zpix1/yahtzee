@@ -105,12 +105,12 @@ a {
   text-align: center;
   width: 20%;
   position: relative;
-  &.used {
-    margin: 1px;
-    stroke: black;
-    border: calc(6px - 1px) solid $dice-border-color;
-    border-radius: 15px;
-  }
+  // &.used {
+  //   margin: 1px;
+  //   stroke: black;
+  //   border: calc(6px - 1px) solid $dice-border-color;
+  //   border-radius: 15px;
+  // }
   &:before {
     content: '';
     padding-top: 100%;
@@ -123,38 +123,58 @@ a {
 }
 
 .diceN0 {
-  background-image: url(../assets/d-0.png);
+  background-image: url(../assets/0.svg.png);
+  &.used {
+    background-image: url(../assets/0_u.svg.png);
+  }
 }
 
 .diceN1 {
-  background-image: url(../assets/d-1.png);
+  background-image: url(../assets/1.svg.png);
+  &.used {
+    background-image: url(../assets/1_u.svg.png);
+  }
 }
 
 .diceN2 {
-  background-image: url(../assets/d-2.png);
+  background-image: url(../assets/2.svg.png);
+  &.used {
+    background-image: url(../assets/2_u.svg.png);
+  }
 }
 
 .diceN3 {
-  background-image: url(../assets/d-3.png);
+  background-image: url(../assets/3.svg.png);
+  &.used {
+    background-image: url(../assets/3_u.svg.png);
+  }
 }
 
 .diceN4 {
-  background-image: url(../assets/d-4.png);
+  background-image: url(../assets/4.svg.png);
+  &.used {
+    background-image: url(../assets/4_u.svg.png);
+  }
 }
 
 .diceN5 {
-  background-image: url(../assets/d-5.png);
+  background-image: url(../assets/5.svg.png);
+  &.used {
+    background-image: url(../assets/5_u.svg.png);
+  }
 }
 
 .diceN6 {
-  background-image: url(../assets/d-6.png);
+  background-image: url(../assets/6.svg.png);
+  &.used {
+    background-image: url(../assets/6_u.svg.png);
+  }
 }
 
 .scores-table {
   border-collapse: collapse;
   width: 100%;
   min-height: 350px;
-  border-radius: 2px;
   table-layout: fixed;
   empty-cells: hide;
 }
@@ -174,6 +194,9 @@ td {
 }
 
 table {
+  border-collapse: collapse;
+  border-radius: 30px;
+  border-style: hidden;
   border: 2px solid $desktop-color;
 }
 
